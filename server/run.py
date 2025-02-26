@@ -24,7 +24,7 @@ if __name__ == "__main__":
         signal.signal(signal.SIGTERM, signal_handler)
 
         # Get port from environment or use default
-        port = int(os.environ.get("PORT", 5000))
+        port = 5001  # Fixed port for FastAPI
         logger.info(f"Using port {port}")
 
         # Start the server

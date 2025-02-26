@@ -35,27 +35,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    logger.info("Health check endpoint accessed")
-    try:
-        return JSONResponse({
-            "status": "healthy",
-            "timestamp": datetime.now().isoformat(),
-            "version": "1.0.0",
-            "server": "FastAPI"
-        })
-    except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        return JSONResponse(
-            status_code=500,
-            content={
-                "status": "unhealthy",
-                "error": str(e)
-            }
-        )
-
 # For testing without database
 test_db = {
     "diagnostic_history": [],
@@ -117,7 +96,16 @@ async def root():
         "health_check": "/health"
     })
 
-
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    logger.info("Health check endpoint accessed")
+    return JSONResponse({
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "version": "1.0.0",
+        "server": "FastAPI"
+    })
 
 async def verify_api_key(x_api_key: str = Header(...)):
     if not x_api_key:

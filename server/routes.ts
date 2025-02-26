@@ -4,6 +4,15 @@ import { storage } from "./storage";
 import { insertUserSchema, insertDiagnosticSchema } from "@shared/schema";
 import { ZodError } from "zod";
 
+// Add custom type for Request to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication middleware
   const authenticate = async (req: Request, res: Response, next: Function) => {
@@ -57,6 +66,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(diagnostics);
     } catch (err) {
       res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Proxy health check to FastAPI
+  app.get("/health", async (req, res) => {
+    try {
+      const response = await fetch('http://localhost:5001/health');
+      const data = await response.json();
+      res.json(data);
+    } catch (err) {
+      res.status(503).json({ 
+        status: "error",
+        message: "FastAPI service unavailable"
+      });
     }
   });
 
