@@ -72,7 +72,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Proxy health check to FastAPI
   app.get("/health", async (req, res) => {
     try {
-      const response = await fetch('http://0.0.0.0:5001/health');
+      const response = await fetch('http://localhost:5001/health');
       const data = await response.json();
       res.json(data);
     } catch (err) {
