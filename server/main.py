@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel, Field, validator
 import logging
+import os
 
 from models import BatteryParameters, SOCRequest, SOHRequest, ResistanceRequest
 from battery_diagnostics import BatteryDiagnostics
@@ -56,7 +57,8 @@ async def health_check():
     return {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "server": "FastAPI"
     }
 
 async def verify_api_key(x_api_key: str = Header(...)):
@@ -168,4 +170,5 @@ async def get_diagnostic_history(user_id: str = Depends(verify_api_key)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=5001, reload=True)
+    port = int(os.environ.get("PORT", 5001))
+    uvicorn.run("main:app", host="localhost", port=port, reload=True)
