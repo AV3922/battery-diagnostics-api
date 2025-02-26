@@ -72,13 +72,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Proxy health check to FastAPI
   app.get("/health", async (req, res) => {
     try {
-      const response = await fetch('http://localhost:5001/health');
+      console.log("Proxying health check to FastAPI...");
+      const response = await fetch('http://0.0.0.0:5001/health', {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      if (!response.ok) {
+        throw new Error(`FastAPI responded with status: ${response.status}`);
+      }
       const data = await response.json();
       res.json(data);
     } catch (err) {
+      console.error("FastAPI health check failed:", err);
       res.status(503).json({ 
         status: "error",
-        message: "FastAPI service unavailable"
+        message: "FastAPI service unavailable",
+        error: err instanceof Error ? err.message : String(err)
       });
     }
   });

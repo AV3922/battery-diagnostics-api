@@ -35,27 +35,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    logger.info("Health check endpoint accessed")
-    try:
-        return JSONResponse({
-            "status": "healthy",
-            "timestamp": datetime.now().isoformat(),
-            "version": "1.0.0",
-            "server": "FastAPI"
-        })
-    except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        return JSONResponse(
-            status_code=500,
-            content={
-                "status": "unhealthy",
-                "error": str(e)
-            }
-        )
-
 # For testing without database
 test_db = {
     "diagnostic_history": [],
@@ -117,7 +96,26 @@ async def root():
         "health_check": "/health"
     })
 
-
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    logger.info("Health check endpoint accessed")
+    try:
+        return JSONResponse({
+            "status": "healthy",
+            "timestamp": datetime.now().isoformat(),
+            "version": "1.0.0",
+            "server": "FastAPI"
+        })
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "status": "unhealthy",
+                "error": str(e)
+            }
+        )
 
 async def verify_api_key(x_api_key: str = Header(...)):
     if not x_api_key:
@@ -162,9 +160,10 @@ async def analyze_soc(request: SOCRequest, user_id: str = Depends(verify_api_key
             'results': result
         })
 
-        return result
+        return JSONResponse(result) # Changed to JSONResponse
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(status_code=500, content={"detail": str(e)}) # Changed to JSONResponse
+
 
 @app.post("/battery/diagnose/soh")
 async def analyze_soh(request: SOHRequest, user_id: str = Depends(verify_api_key)):
@@ -184,9 +183,9 @@ async def analyze_soh(request: SOHRequest, user_id: str = Depends(verify_api_key
             'results': result
         })
 
-        return result
+        return JSONResponse(result) # Changed to JSONResponse
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(status_code=500, content={"detail": str(e)}) # Changed to JSONResponse
 
 @app.post("/battery/diagnose/resistance")
 async def analyze_resistance(request: ResistanceRequest, user_id: str = Depends(verify_api_key)):
@@ -210,9 +209,9 @@ async def analyze_resistance(request: ResistanceRequest, user_id: str = Depends(
             'results': result
         })
 
-        return result
+        return JSONResponse(result) # Changed to JSONResponse
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(status_code=500, content={"detail": str(e)}) # Changed to JSONResponse
 
 @app.get("/battery/logs")
 async def get_diagnostic_history(user_id: str = Depends(verify_api_key)):
@@ -220,16 +219,14 @@ async def get_diagnostic_history(user_id: str = Depends(verify_api_key)):
     try:
         filtered_logs = [log for log in test_db["diagnostic_history"] if log['user_id'] == user_id]
         filtered_logs.sort(key=lambda x: x['timestamp'], reverse=True)
-        return {
-            "logs": filtered_logs[:100]
-        }
+        return JSONResponse({"logs": filtered_logs[:100]}) # Changed to JSONResponse
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(status_code=500, content={"detail": str(e)}) # Changed to JSONResponse
 
 if __name__ == "__main__":
     import uvicorn
     try:
-        port = int(os.environ.get("PORT", 5000))
+        port = 5001  # Fixed port for FastAPI
         logger.info(f"Starting FastAPI server on port {port}")
         uvicorn.run(app, host="0.0.0.0", port=port, reload=True)
     except Exception as e:
