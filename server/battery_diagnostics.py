@@ -1,7 +1,6 @@
-```python
 from typing import List, Dict, Optional
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class BatteryDiagnostics:
     # Battery chemistry specifications
@@ -33,7 +32,7 @@ class BatteryDiagnostics:
     def calculate_soc(voltage: float, battery_type: str, temperature: float) -> Dict:
         """Calculate State of Charge using voltage-based estimation"""
         specs = BatteryDiagnostics.BATTERY_SPECS[battery_type]
-        
+
         # Temperature compensation factor
         temp_factor = 1.0
         if temperature < 25:
@@ -44,7 +43,7 @@ class BatteryDiagnostics:
         # SOC calculation with temperature compensation
         soc = ((voltage - specs["min_voltage"]) / 
                (specs["max_voltage"] - specs["min_voltage"]) * 100 * temp_factor)
-        
+
         # Determine charging status
         if voltage > specs["nominal_voltage"]:
             status = "Charging"
@@ -332,4 +331,3 @@ class BatteryDiagnostics:
             "severity": severity,
             "recommendedActions": actions
         }
-```

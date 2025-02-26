@@ -5,13 +5,13 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from typing import Optional
 
-from .models import BatteryParameters, SOCRequest, SOHRequest, ResistanceRequest # Assuming these models are defined in .models file
-from .battery_diagnostics import BatteryDiagnostics
+from models import BatteryParameters, SOCRequest, SOHRequest, ResistanceRequest
+from battery_diagnostics import BatteryDiagnostics
 
-# Initialize Firebase
-cred = credentials.Certificate("firebase-credentials.json")
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+# Initialize Firebase (commented out until credentials are provided)
+# cred = credentials.Certificate("firebase-credentials.json")
+# firebase_admin.initialize_app(cred)
+# db = firestore.client()
 
 app = FastAPI(
     title="Battery OS API",
@@ -28,16 +28,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Authentication middleware
+# For testing without Firebase
+test_db = {
+    "diagnostic_history": [],
+    "prediction_history": []
+}
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to Battery OS API"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+
+# Simplified auth for testing
 async def verify_api_key(x_api_key: str = Header(...)):
     if not x_api_key:
         raise HTTPException(status_code=401, detail="API key required")
-    # Verify API key in Firebase
-    user_ref = db.collection('users').where('api_key', '==', x_api_key).limit(1)
-    user = user_ref.get()
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid API key")
-    return user[0].id
+    # For testing, accept any non-empty API key
+    return "test_user_id"
 
 @app.get("/api-list")
 async def get_api_list():
@@ -95,8 +105,8 @@ async def analyze_soc(request: SOCRequest, user_id: str = Depends(verify_api_key
             request.temperature
         )
 
-        # Store test history
-        db.collection('diagnostic_history').add({
+        # Store test history  -  Modified to use test_db for testing
+        test_db["diagnostic_history"].append({
             'user_id': user_id,
             'timestamp': datetime.now(),
             'type': 'soc',
@@ -118,7 +128,7 @@ async def analyze_soh(request: SOHRequest, user_id: str = Depends(verify_api_key
             request.cycleCount
         )
 
-        db.collection('diagnostic_history').add({
+        test_db["diagnostic_history"].append({
             'user_id': user_id,
             'timestamp': datetime.now(),
             'type': 'soh',
@@ -141,7 +151,7 @@ async def analyze_resistance(request: ResistanceRequest, user_id: str = Depends(
             request.batteryType
         )
 
-        db.collection('diagnostic_history').add({
+        test_db["diagnostic_history"].append({
             'user_id': user_id,
             'timestamp': datetime.now(),
             'type': 'resistance',
@@ -159,14 +169,11 @@ async def analyze_resistance(request: ResistanceRequest, user_id: str = Depends(
 async def get_diagnostic_history(user_id: str = Depends(verify_api_key)):
     """Retrieve battery test history"""
     try:
-        logs = db.collection('diagnostic_history')\
-                 .where('user_id', '==', user_id)\
-                 .order_by('timestamp', direction=firestore.Query.DESCENDING)\
-                 .limit(100)\
-                 .stream()
-
+        #Modified to use test_db for testing
+        filtered_logs = [log for log in test_db["diagnostic_history"] if log['user_id'] == user_id]
+        filtered_logs.sort(key=lambda x: x['timestamp'], reverse=True) #Sort by timestamp descending
         return {
-            "logs": [doc.to_dict() for doc in logs]
+            "logs": filtered_logs[:100] #Limit to 100 logs
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -182,7 +189,7 @@ async def predict_battery_health(params: BatteryParameters, user_id: str = Depen
             "remainingLifetime": "365 days"
         }
 
-        db.collection('prediction_history').add({
+        test_db["prediction_history"].append({
             'user_id': user_id,
             'timestamp': datetime.now(),
             'parameters': params.dict(),
@@ -221,4 +228,4 @@ def generate_recommendations(risks: List[str]) -> List[str]:
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

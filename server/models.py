@@ -1,4 +1,3 @@
-```python
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from datetime import datetime
@@ -73,4 +72,3 @@ class DiagnosticResult(BaseModel):
     batteryType: str
     parameters: dict
     results: dict
-```
