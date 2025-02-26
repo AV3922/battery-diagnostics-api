@@ -1,25 +1,20 @@
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
-import firebase_admin
-from firebase_admin import credentials, firestore
 from typing import Optional, List
 
 from models import BatteryParameters, SOCRequest, SOHRequest, ResistanceRequest
 from battery_diagnostics import BatteryDiagnostics
 
-# Initialize Firebase (commented out until credentials are provided)
-# cred = credentials.Certificate("firebase-credentials.json")
-# firebase_admin.initialize_app(cred)
-# db = firestore.client()
-
 app = FastAPI(
     title="Battery OS API",
     description="Advanced Battery Diagnostics and Analysis API",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
 )
 
-# Enable CORS
+# Enable CORS with proper configuration for Replit
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -36,11 +31,28 @@ test_db = {
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to Battery OS API"}
+    """Root endpoint to verify API is running"""
+    return {
+        "status": "online",
+        "message": "Welcome to Battery OS API",
+        "documentation": "/docs",
+        "health_check": "/health"
+    }
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "version": "1.0.0"
+    }
+
+# Initialize Firebase (commented out until credentials are provided)
+# cred = credentials.Certificate("firebase-credentials.json")
+# firebase_admin.initialize_app(cred)
+# db = firestore.client()
+
 
 # Simplified auth for testing
 async def verify_api_key(x_api_key: str = Header(...)):
