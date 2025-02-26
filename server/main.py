@@ -25,13 +25,13 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Enable CORS
+# Enable CORS for Replit environment
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Allows all origins
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
 )
 
 # For testing without database
@@ -182,8 +182,8 @@ async def get_diagnostic_history(user_id: str = Depends(verify_api_key)):
 if __name__ == "__main__":
     import uvicorn
     try:
-        port = int(os.environ.get("PORT", 5001))
+        port = int(os.environ.get("PORT", 5000))
         logger.info(f"Starting FastAPI server on port {port}")
-        uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+        uvicorn.run(app, host="0.0.0.0", port=port, reload=True)
     except Exception as e:
         logger.error(f"Failed to start server: {e}")

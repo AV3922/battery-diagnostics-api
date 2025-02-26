@@ -3,6 +3,7 @@ import logging
 import os
 import signal
 import sys
+from main import app
 
 # Configure logging
 logging.basicConfig(
@@ -22,11 +23,15 @@ if __name__ == "__main__":
         signal.signal(signal.SIGINT, signal_handler)
         signal.signal(signal.SIGTERM, signal_handler)
 
+        # Get port from environment or use default
+        port = int(os.environ.get("PORT", 5000))
+        logger.info(f"Using port {port}")
+
         # Start the server
         uvicorn.run(
-            "main:app",
-            host="0.0.0.0",  # Changed to 0.0.0.0 to be accessible
-            port=5001,
+            app,
+            host="0.0.0.0",
+            port=port,
             reload=True,
             log_level="info"
         )
