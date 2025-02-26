@@ -45,7 +45,368 @@ const API_DETAILS = {
       { code: "E003", description: "Invalid cell count" }
     ]
   },
-  // Add other API endpoints with similar structure
+  "soc": {
+    name: "State of Charge API",
+    version: "v1",
+    description: "Calculate real-time battery charge levels using voltage-based SOC estimation",
+    endpoint: "/api/diagnostics/soc",
+    curl: `curl -X "POST" \\
+"https://api.batteryos.com/api/v1/diagnostics/soc" \\
+-H "accept: */*" \\
+-H "x-api-key: YOUR_API_KEY" \\
+-H "Content-Type: application/json" \\
+-d '{
+  "batteryType": "Li-ion",
+  "voltage": 3.7,
+  "temperature": 25
+}'`,
+    inputAttributes: [
+      { name: "batteryType", type: "string", description: "Battery chemistry (Li-ion, LiFePO₄, Lead-acid)" },
+      { name: "voltage", type: "number", description: "Current battery voltage (V)" },
+      { name: "temperature", type: "number", description: "Battery temperature (°C)" }
+    ],
+    responseParameters: [
+      { name: "stateOfCharge", description: "Current battery charge level (0-100%)" },
+      { name: "estimatedRange", description: "Estimated range based on current charge" },
+      { name: "chargingStatus", description: "Current charging status (Charging, Discharging, Full)" }
+    ],
+    statusCodes: [
+      { code: "200", description: "OK" },
+      { code: "400", description: "Bad Request" },
+      { code: "401", description: "Unauthorized" },
+      { code: "500", description: "Internal Server Error" }
+    ],
+    errorCodes: [
+      { code: "E001", description: "Invalid battery type" },
+      { code: "E002", description: "Voltage out of range" },
+      { code: "E003", description: "Temperature out of range" }
+    ]
+  },
+  "soh": {
+    name: "State of Health API",
+    version: "v1",
+    description: "Determine battery health status by comparing current vs rated capacity",
+    endpoint: "/api/diagnostics/soh",
+    curl: `curl -X "POST" \\
+"https://api.batteryos.com/api/v1/diagnostics/soh" \\
+-H "accept: */*" \\
+-H "x-api-key: YOUR_API_KEY" \\
+-H "Content-Type: application/json" \\
+-d '{
+  "batteryType": "Li-ion",
+  "currentCapacity": 2800,
+  "ratedCapacity": 3000,
+  "cycleCount": 250
+}'`,
+    inputAttributes: [
+      { name: "batteryType", type: "string", description: "Battery chemistry (Li-ion, LiFePO₄, Lead-acid)" },
+      { name: "currentCapacity", type: "number", description: "Current measured capacity (mAh)" },
+      { name: "ratedCapacity", type: "number", description: "Original rated capacity (mAh)" },
+      { name: "cycleCount", type: "integer", description: "Number of charge cycles completed" }
+    ],
+    responseParameters: [
+      { name: "stateOfHealth", description: "Battery health percentage (0-100%)" },
+      { name: "capacityLoss", description: "Percentage of capacity lost" },
+      { name: "healthStatus", description: "Qualitative health status (Good, Fair, Poor)" },
+      { name: "recommendedAction", description: "Suggested maintenance action" }
+    ],
+    statusCodes: [
+      { code: "200", description: "OK" },
+      { code: "400", description: "Bad Request" },
+      { code: "401", description: "Unauthorized" },
+      { code: "500", description: "Internal Server Error" }
+    ],
+    errorCodes: [
+      { code: "E001", description: "Invalid battery type" },
+      { code: "E002", description: "Invalid capacity values" },
+      { code: "E003", description: "Cycle count out of range" }
+    ]
+  },
+  "resistance": {
+    name: "Internal Resistance API",
+    version: "v1",
+    description: "Measure battery internal resistance for performance analysis",
+    endpoint: "/api/diagnostics/resistance",
+    curl: `curl -X "POST" \\
+"https://api.batteryos.com/api/v1/diagnostics/resistance" \\
+-H "accept: */*" \\
+-H "x-api-key: YOUR_API_KEY" \\
+-H "Content-Type: application/json" \\
+-d '{
+  "batteryType": "Li-ion",
+  "voltage": 3.7,
+  "current": 1.0,
+  "temperature": 25
+}'`,
+    inputAttributes: [
+      { name: "batteryType", type: "string", description: "Battery chemistry (Li-ion, LiFePO₄, Lead-acid)" },
+      { name: "voltage", type: "number", description: "Battery voltage under load (V)" },
+      { name: "current", type: "number", description: "Load current (A)" },
+      { name: "temperature", type: "number", description: "Battery temperature (°C)" }
+    ],
+    responseParameters: [
+      { name: "internalResistance", description: "Calculated internal resistance (mΩ)" },
+      { name: "resistanceStatus", description: "Resistance level assessment" },
+      { name: "powerLoss", description: "Estimated power loss due to internal resistance" }
+    ],
+    statusCodes: [
+      { code: "200", description: "OK" },
+      { code: "400", description: "Bad Request" },
+      { code: "401", description: "Unauthorized" },
+      { code: "500", description: "Internal Server Error" }
+    ],
+    errorCodes: [
+      { code: "E001", description: "Invalid battery type" },
+      { code: "E002", description: "Invalid measurement values" },
+      { code: "E003", description: "Temperature out of range" }
+    ]
+  },
+  "capacity-fade": {
+    name: "Capacity Fade Analysis API",
+    version: "v1",
+    description: "Track capacity degradation over time and usage cycles",
+    endpoint: "/api/diagnostics/capacity-fade",
+    curl: `curl -X "POST" \\
+"https://api.batteryos.com/api/v1/diagnostics/capacity-fade" \\
+-H "accept: */*" \\
+-H "x-api-key: YOUR_API_KEY" \\
+-H "Content-Type: application/json" \\
+-d '{
+  "batteryType": "Li-ion",
+  "initialCapacity": 3000,
+  "currentCapacity": 2700,
+  "cycleCount": 300,
+  "timeInService": 365
+}'`,
+    inputAttributes: [
+      { name: "batteryType", type: "string", description: "Battery chemistry (Li-ion, LiFePO₄)" },
+      { name: "initialCapacity", type: "number", description: "Initial battery capacity (mAh)" },
+      { name: "currentCapacity", type: "number", description: "Current battery capacity (mAh)" },
+      { name: "cycleCount", type: "integer", description: "Number of charge cycles" },
+      { name: "timeInService", type: "integer", description: "Days in service" }
+    ],
+    responseParameters: [
+      { name: "capacityFade", description: "Percentage of capacity lost over time" },
+      { name: "fadeRate", description: "Rate of capacity loss per cycle" },
+      { name: "projectedLifetime", description: "Estimated remaining lifetime" },
+      { name: "recommendedAction", description: "Maintenance recommendations" }
+    ],
+    statusCodes: [
+      { code: "200", description: "OK" },
+      { code: "400", description: "Bad Request" },
+      { code: "401", description: "Unauthorized" },
+      { code: "500", description: "Internal Server Error" }
+    ],
+    errorCodes: [
+      { code: "E001", description: "Invalid battery type" },
+      { code: "E002", description: "Invalid capacity values" },
+      { code: "E003", description: "Invalid service time" }
+    ]
+  },
+  "cell-balance": {
+    name: "Cell Imbalance Detection API",
+    version: "v1",
+    description: "Monitor individual cell voltages and detect dangerous imbalances",
+    endpoint: "/api/diagnostics/cell-balance",
+    curl: `curl -X "POST" \\
+"https://api.batteryos.com/api/v1/diagnostics/cell-balance" \\
+-H "accept: */*" \\
+-H "x-api-key: YOUR_API_KEY" \\
+-H "Content-Type: application/json" \\
+-d '{
+  "batteryType": "Li-ion",
+  "cellVoltages": [3.9, 3.85, 3.92, 3.88],
+  "temperature": 25
+}'`,
+    inputAttributes: [
+      { name: "batteryType", type: "string", description: "Battery chemistry (Li-ion, LiFePO₄)" },
+      { name: "cellVoltages", type: "array", description: "Array of individual cell voltages" },
+      { name: "temperature", type: "number", description: "Battery temperature (°C)" }
+    ],
+    responseParameters: [
+      { name: "maxImbalance", description: "Maximum voltage difference between cells" },
+      { name: "balanceStatus", description: "Cell balance status assessment" },
+      { name: "problematicCells", description: "Identification of cells needing attention" }
+    ],
+    statusCodes: [
+      { code: "200", description: "OK" },
+      { code: "400", description: "Bad Request" },
+      { code: "401", description: "Unauthorized" },
+      { code: "500", description: "Internal Server Error" }
+    ],
+    errorCodes: [
+      { code: "E001", description: "Invalid battery type" },
+      { code: "E002", description: "Invalid cell voltage readings" },
+      { code: "E003", description: "Temperature out of range" }
+    ]
+  },
+  "cycle-life": {
+    name: "Cycle Life Estimation API",
+    version: "v1",
+    description: "Predict remaining battery life based on degradation patterns",
+    endpoint: "/api/diagnostics/cycle-life",
+    curl: `curl -X "POST" \\
+"https://api.batteryos.com/api/v1/diagnostics/cycle-life" \\
+-H "accept: */*" \\
+-H "x-api-key: YOUR_API_KEY" \\
+-H "Content-Type: application/json" \\
+-d '{
+  "batteryType": "Li-ion",
+  "cycleCount": 500,
+  "depthOfDischarge": 80,
+  "averageTemperature": 25,
+  "currentSOH": 90
+}'`,
+    inputAttributes: [
+      { name: "batteryType", type: "string", description: "Battery chemistry (Li-ion, LiFePO₄, Lead-acid)" },
+      { name: "cycleCount", type: "integer", description: "Current cycle count" },
+      { name: "depthOfDischarge", type: "number", description: "Average depth of discharge (%)" },
+      { name: "averageTemperature", type: "number", description: "Average operating temperature (°C)" },
+      { name: "currentSOH", type: "number", description: "Current state of health (%)" }
+    ],
+    responseParameters: [
+      { name: "remainingCycles", description: "Estimated remaining cycle life" },
+      { name: "estimatedEOL", description: "Predicted end-of-life date" },
+      { name: "confidenceLevel", description: "Prediction confidence percentage" }
+    ],
+    statusCodes: [
+      { code: "200", description: "OK" },
+      { code: "400", description: "Bad Request" },
+      { code: "401", description: "Unauthorized" },
+      { code: "500", description: "Internal Server Error" }
+    ],
+    errorCodes: [
+      { code: "E001", description: "Invalid battery type" },
+      { code: "E002", description: "Invalid cycle parameters" },
+      { code: "E003", description: "Temperature out of range" }
+    ]
+  },
+  "safety-monitor": {
+    name: "Safety Monitoring API",
+    version: "v1",
+    description: "Real-time monitoring of voltage, temperature, and current for safety risks",
+    endpoint: "/api/diagnostics/safety",
+    curl: `curl -X "POST" \\
+"https://api.batteryos.com/api/v1/diagnostics/safety" \\
+-H "accept: */*" \\
+-H "x-api-key: YOUR_API_KEY" \\
+-H "Content-Type: application/json" \\
+-d '{
+  "batteryType": "Li-ion",
+  "voltage": 3.7,
+  "current": 2.0,
+  "temperature": 35,
+  "pressure": 1.0
+}'`,
+    inputAttributes: [
+      { name: "batteryType", type: "string", description: "Battery chemistry (Li-ion, LiFePO₄, Lead-acid)" },
+      { name: "voltage", type: "number", description: "Battery voltage (V)" },
+      { name: "current", type: "number", description: "Current flow (A)" },
+      { name: "temperature", type: "number", description: "Battery temperature (°C)" },
+      { name: "pressure", type: "number", description: "Internal pressure (atm)" }
+    ],
+    responseParameters: [
+      { name: "safetyStatus", description: "Overall safety assessment" },
+      { name: "riskLevel", description: "Calculated risk level (Low, Medium, High)" },
+      { name: "warningFlags", description: "Active safety warnings" },
+      { name: "recommendedActions", description: "Safety recommendations" }
+    ],
+    statusCodes: [
+      { code: "200", description: "OK" },
+      { code: "400", description: "Bad Request" },
+      { code: "401", description: "Unauthorized" },
+      { code: "500", description: "Internal Server Error" }
+    ],
+    errorCodes: [
+      { code: "E001", description: "Invalid battery type" },
+      { code: "E002", description: "Parameters out of safe range" },
+      { code: "E003", description: "Critical safety violation" }
+    ]
+  },
+  "thermal-analysis": {
+    name: "Thermal Analysis API",
+    version: "v1",
+    description: "Temperature monitoring and thermal runaway risk detection",
+    endpoint: "/api/diagnostics/thermal",
+    curl: `curl -X "POST" \\
+"https://api.batteryos.com/api/v1/diagnostics/thermal" \\
+-H "accept: */*" \\
+-H "x-api-key: YOUR_API_KEY" \\
+-H "Content-Type: application/json" \\
+-d '{
+  "batteryType": "Li-ion",
+  "temperature": 35,
+  "rateOfChange": 0.5,
+  "ambientTemperature": 25,
+  "loadProfile": "high"
+}'`,
+    inputAttributes: [
+      { name: "batteryType", type: "string", description: "Battery chemistry (Li-ion, LiFePO₄)" },
+      { name: "temperature", type: "number", description: "Current temperature (°C)" },
+      { name: "rateOfChange", type: "number", description: "Temperature change rate (°C/min)" },
+      { name: "ambientTemperature", type: "number", description: "Ambient temperature (°C)" },
+      { name: "loadProfile", type: "string", description: "Current load profile (low/medium/high)" }
+    ],
+    responseParameters: [
+      { name: "thermalStatus", description: "Current thermal condition assessment" },
+      { name: "runawayRisk", description: "Thermal runaway risk percentage" },
+      { name: "coolingNeeded", description: "Required cooling action" },
+      { name: "temperatureMargin", description: "Margin to thermal limits" }
+    ],
+    statusCodes: [
+      { code: "200", description: "OK" },
+      { code: "400", description: "Bad Request" },
+      { code: "401", description: "Unauthorized" },
+      { code: "500", description: "Internal Server Error" }
+    ],
+    errorCodes: [
+      { code: "E001", description: "Invalid battery type" },
+      { code: "E002", description: "Temperature out of range" },
+      { code: "E003", description: "Invalid load profile" }
+    ]
+  },
+  "fault-detection": {
+    name: "Fault Detection API",
+    version: "v1",
+    description: "Detect and diagnose battery faults including internal damage and reverse current",
+    endpoint: "/api/diagnostics/faults",
+    curl: `curl -X "POST" \\
+"https://api.batteryos.com/api/v1/diagnostics/faults" \\
+-H "accept: */*" \\
+-H "x-api-key: YOUR_API_KEY" \\
+-H "Content-Type: application/json" \\
+-d '{
+  "batteryType": "Li-ion",
+  "voltage": 3.7,
+  "current": -0.1,
+  "temperature": 40,
+  "impedance": 150
+}'`,
+    inputAttributes: [
+      { name: "batteryType", type: "string", description: "Battery chemistry (Li-ion, LiFePO₄, Lead-acid)" },
+      { name: "voltage", type: "number", description: "Battery voltage (V)" },
+      { name: "current", type: "number", description: "Current flow (A)" },
+      { name: "temperature", type: "number", description: "Battery temperature (°C)" },
+      { name: "impedance", type: "number", description: "Internal impedance (mΩ)" }
+    ],
+    responseParameters: [
+      { name: "faultStatus", description: "Detected fault conditions" },
+      { name: "faultType", description: "Classification of detected faults" },
+      { name: "severity", description: "Fault severity level" },
+      { name: "recommendedActions", description: "Suggested corrective actions" }
+    ],
+    statusCodes: [
+      { code: "200", description: "OK" },
+      { code: "400", description: "Bad Request" },
+      { code: "401", description: "Unauthorized" },
+      { code: "500", description: "Internal Server Error" }
+    ],
+    errorCodes: [
+      { code: "E001", description: "Invalid battery type" },
+      { code: "E002", description: "Invalid measurement values" },
+      { code: "E003", description: "Critical fault detected" }
+    ]
+  }
 };
 
 export default function ApiDetail() {
