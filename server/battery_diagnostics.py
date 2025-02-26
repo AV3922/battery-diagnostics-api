@@ -168,36 +168,6 @@ class BatteryDiagnostics:
         }
 
     @staticmethod
-    def estimate_cycle_life(cycle_count: int, depth_of_discharge: float,
-                          avg_temperature: float, current_soh: float) -> Dict:
-        """Predict remaining cycle life based on usage patterns"""
-        # Base cycle life estimation
-        base_cycles = 2000  # Standard Li-ion cycle life
-
-        # Adjust for depth of discharge
-        if depth_of_discharge > 80:
-            base_cycles *= 0.7
-        elif depth_of_discharge < 50:
-            base_cycles *= 1.3
-
-        # Temperature impact
-        if avg_temperature > 35:
-            base_cycles *= 0.8
-        elif avg_temperature < 15:
-            base_cycles *= 0.9
-
-        # Calculate remaining cycles
-        remaining_cycles = int(base_cycles * (current_soh / 100))
-        confidence = 90 - (cycle_count / 100)  # Confidence decreases with age
-
-        return {
-            "remainingCycles": remaining_cycles,
-            "estimatedEOL": (datetime.now() + 
-                           timedelta(days=remaining_cycles/2)).strftime("%Y-%m-%d"),
-            "confidenceLevel": max(min(confidence, 95), 60)
-        }
-
-    @staticmethod
     def monitor_safety(voltage: float, current: float, temperature: float,
                       pressure: float, battery_type: str) -> Dict:
         """Monitor battery safety parameters and assess risks"""
@@ -253,7 +223,7 @@ class BatteryDiagnostics:
 
         # Calculate temperature margin
         margin = THERMAL_LIMITS["critical"] - temperature
-        
+
         # Assess thermal status
         if temperature > THERMAL_LIMITS["runaway"]:
             status = "Critical"
@@ -288,6 +258,36 @@ class BatteryDiagnostics:
             "runawayRisk": min(risk, 100),
             "coolingNeeded": cooling,
             "temperatureMargin": margin
+        }
+
+    @staticmethod
+    def estimate_cycle_life(cycle_count: int, depth_of_discharge: float,
+                          avg_temperature: float, current_soh: float) -> Dict:
+        """Predict remaining cycle life based on usage patterns"""
+        # Base cycle life estimation
+        base_cycles = 2000  # Standard Li-ion cycle life
+
+        # Adjust for depth of discharge
+        if depth_of_discharge > 80:
+            base_cycles *= 0.7
+        elif depth_of_discharge < 50:
+            base_cycles *= 1.3
+
+        # Temperature impact
+        if avg_temperature > 35:
+            base_cycles *= 0.8
+        elif avg_temperature < 15:
+            base_cycles *= 0.9
+
+        # Calculate remaining cycles
+        remaining_cycles = int(base_cycles * (current_soh / 100))
+        confidence = 90 - (cycle_count / 100)  # Confidence decreases with age
+
+        return {
+            "remainingCycles": remaining_cycles,
+            "estimatedEOL": (datetime.now() + 
+                           timedelta(days=remaining_cycles/2)).strftime("%Y-%m-%d"),
+            "confidenceLevel": max(min(confidence, 95), 60)
         }
 
     @staticmethod
