@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials, firestore
-from typing import Optional
+from typing import Optional, List
 
 from models import BatteryParameters, SOCRequest, SOHRequest, ResistanceRequest
 from battery_diagnostics import BatteryDiagnostics
