@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, validator
 import logging
 import os
 from starlette.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from models import BatteryParameters, SOCRequest, SOHRequest, ResistanceRequest
 from battery_diagnostics import BatteryDiagnostics
@@ -39,6 +40,40 @@ test_db = {
     "diagnostic_history": [],
     "prediction_history": []
 }
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request, exc):
+    """Custom exception handler for HTTP errors"""
+    logger.error(f"HTTP error occurred: {exc.detail}")
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "detail": exc.detail,
+            "status_code": exc.status_code
+        }
+    )
+
+@app.exception_handler(404)
+async def not_found_exception_handler(request, exc):
+    """Custom 404 handler"""
+    logger.error(f"404 error: Path {request.url.path} not found")
+    return JSONResponse(
+        status_code=404,
+        content={
+            "detail": "The requested resource was not found",
+            "path": request.url.path,
+            "available_endpoints": [
+                "/",
+                "/health",
+                "/api-list",
+                "/api-detail/{parameter}",
+                "/battery/diagnose/soc",
+                "/battery/diagnose/soh",
+                "/battery/diagnose/resistance",
+                "/battery/logs"
+            ]
+        }
+    )
 
 @app.on_event("startup")
 async def startup_event():
