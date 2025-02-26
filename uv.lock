@@ -871,6 +871,7 @@ dependencies = [
     { name = "pytest" },
     { name = "python-multipart" },
     { name = "scikit-learn" },
+    { name = "starlette" },
     { name = "uvicorn" },
 ]
 
@@ -885,6 +886,7 @@ requires-dist = [
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "python-multipart", specifier = ">=0.0.20" },
     { name = "scikit-learn", specifier = ">=1.6.1" },
+    { name = "starlette", specifier = ">=0.45.3" },
     { name = "uvicorn", specifier = ">=0.34.0" },
 ]
 
