@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime, timedelta
 
 class BatteryDiagnostics:
-    # Battery chemistry specifications
+    # Battery chemistry specifications remain unchanged
     BATTERY_SPECS = {
         "Li-ion_11.1V": {"nominal_voltage": 11.1, "max_voltage": 12.6, "min_voltage": 8.25, "max_temp": 45, "min_temp": 0},
         "Li-ion_14.8V": {"nominal_voltage": 14.8, "max_voltage": 16.8, "min_voltage": 10.0, "max_temp": 45, "min_temp": 0},
@@ -28,62 +28,99 @@ class BatteryDiagnostics:
     }
 
     @staticmethod
+    def _validate_temperature(temperature: float, battery_type: str) -> float:
+        """Validate and calculate temperature compensation factor"""
+        specs = BatteryDiagnostics.BATTERY_SPECS[battery_type]
+        if temperature > specs["max_temp"]:
+            raise ValueError(f"Temperature {temperature}°C exceeds maximum allowed {specs['max_temp']}°C")
+        if temperature < specs["min_temp"]:
+            raise ValueError(f"Temperature {temperature}°C below minimum allowed {specs['min_temp']}°C")
+
+        # Enhanced temperature compensation
+        if temperature < 0:
+            return 0.8  # Severe cold impact
+        elif temperature < 10:
+            return 0.9  # Cold impact
+        elif temperature < 25:
+            return 0.95  # Cool impact
+        elif temperature < 35:
+            return 1.0  # Optimal
+        elif temperature < 40:
+            return 0.95  # Warm impact
+        else:
+            return 0.9  # Hot impact
+
+    @staticmethod
     def calculate_soc(voltage: float, battery_type: str, temperature: float) -> Dict:
-        """Calculate State of Charge using voltage-based estimation"""
+        """Calculate State of Charge using voltage-based estimation with enhanced temperature compensation"""
+        if battery_type not in BatteryDiagnostics.BATTERY_SPECS:
+            raise ValueError(f"Unknown battery type: {battery_type}")
+
         specs = BatteryDiagnostics.BATTERY_SPECS[battery_type]
 
-        # Temperature compensation factor
-        temp_factor = 1.0
-        if temperature < 25:
-            temp_factor = 0.95  # Reduced accuracy in cold
-        elif temperature > 40:
-            temp_factor = 0.9   # Reduced accuracy in heat
+        # Validate voltage
+        if voltage > specs["max_voltage"]:
+            raise ValueError(f"Voltage {voltage}V exceeds maximum allowed {specs['max_voltage']}V")
+        if voltage < specs["min_voltage"]:
+            raise ValueError(f"Voltage {voltage}V below minimum allowed {specs['min_voltage']}V")
 
-        # SOC calculation with temperature compensation
-        soc = ((voltage - specs["min_voltage"]) / 
-               (specs["max_voltage"] - specs["min_voltage"]) * 100 * temp_factor)
+        # Get temperature compensation
+        temp_factor = BatteryDiagnostics._validate_temperature(temperature, battery_type)
+
+        # Enhanced SOC calculation with temperature compensation
+        voltage_range = specs["max_voltage"] - specs["min_voltage"]
+        voltage_normalized = voltage - specs["min_voltage"]
+
+        # Non-linear SOC estimation using sigmoid function
+        soc = 100 * (1 / (1 + np.exp(-12 * (voltage_normalized/voltage_range - 0.5))))
+        soc = soc * temp_factor
 
         # Determine charging status
-        if voltage > specs["nominal_voltage"]:
+        if voltage > specs["nominal_voltage"] * 1.05:
             status = "Charging"
-        elif voltage < specs["nominal_voltage"] * 0.9:
+        elif voltage < specs["nominal_voltage"] * 0.95:
             status = "Discharging"
         else:
             status = "Full"
 
         return {
             "stateOfCharge": min(max(soc, 0), 100),
-            "estimatedRange": f"{int(soc * 0.8)} km",  # Example range estimation
-            "chargingStatus": status
+            "estimatedRange": f"{int(soc * 0.8)} km",
+            "chargingStatus": status,
+            "temperatureCompensation": temp_factor
         }
 
     @staticmethod
     def calculate_soh(current_capacity: float, rated_capacity: float, cycle_count: int) -> Dict:
-        """Calculate State of Health based on capacity retention"""
+        """Calculate State of Health with enhanced degradation analysis"""
+        if current_capacity <= 0 or rated_capacity <= 0:
+            raise ValueError("Capacity values must be positive")
+        if cycle_count < 0:
+            raise ValueError("Cycle count cannot be negative")
+
         soh = (current_capacity / rated_capacity) * 100
         capacity_loss = 100 - soh
 
-        # Determine health status
-        if soh >= 80:
-            status = "Good"
-        elif soh >= 60:
-            status = "Fair"
-        else:
-            status = "Poor"
+        # Enhanced cycle-based degradation analysis
+        cycle_factor = min(cycle_count / 1000, 1)  # Normalize to 1000 cycles
+        adjusted_soh = soh * (1 - cycle_factor * 0.1)  # Adjust for cycle aging
 
-        # Generate recommendations
-        if status == "Poor":
-            action = "Consider battery replacement"
-        elif status == "Fair":
+        if adjusted_soh >= 80:
+            status = "Good"
+            action = "Regular maintenance sufficient"
+        elif adjusted_soh >= 60:
+            status = "Fair"
             action = "Monitor battery health closely"
         else:
-            action = "Regular maintenance sufficient"
+            status = "Poor"
+            action = "Consider battery replacement"
 
         return {
-            "stateOfHealth": soh,
+            "stateOfHealth": adjusted_soh,
             "capacityLoss": capacity_loss,
             "healthStatus": status,
-            "recommendedAction": action
+            "recommendedAction": action,
+            "cycleAging": cycle_factor * 100
         }
 
     @staticmethod
