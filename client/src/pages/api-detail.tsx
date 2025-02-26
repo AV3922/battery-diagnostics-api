@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Battery, Terminal, Database } from "lucide-react";
 import { useState } from "react";
 
 const API_DETAILS = {
@@ -12,7 +13,7 @@ const API_DETAILS = {
     description: "Monitor and analyze battery voltage levels",
     endpoint: "/api/diagnostics/voltage",
     curl: `curl -X "POST" \\
-"https://api.batterydiagnostics.com/api/v1/diagnostics/voltage" \\
+"https://api.batteryos.com/api/v1/diagnostics/voltage" \\
 -H "accept: */*" \\
 -H "x-api-key: YOUR_API_KEY" \\
 -H "Content-Type: application/json" \\
@@ -59,144 +60,176 @@ export default function ApiDetail() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-bold">{apiInfo.name}</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">API Version</span>
-          <Select value={version} onValueChange={setVersion}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="v1">Version 1.0</SelectItem>
-              <SelectItem value="v2">Version 2.0</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <div className="space-y-1">
+            <h1 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+              {apiInfo.name}
+            </h1>
+            <p className="text-muted-foreground">
+              {apiInfo.description}
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">API Version</span>
+            <Select value={version} onValueChange={setVersion}>
+              <SelectTrigger className="w-32 bg-background border-border/40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="v1">Version 1.0</SelectItem>
+                <SelectItem value="v2">Version 2.0</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <Card className="mb-8 border-border/40 bg-background/50 backdrop-blur">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4 mb-6">
+              <Terminal className="h-8 w-8 text-primary" />
+              <h2 className="text-2xl font-semibold">Try API</h2>
+              <Button className="ml-auto bg-primary hover:bg-primary/90">
+                Try Now
+              </Button>
+            </div>
+
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+              <TabsList className="bg-muted/50 p-1">
+                <TabsTrigger value="curl" className="data-[state=active]:bg-background">cURL</TabsTrigger>
+                <TabsTrigger value="request" className="data-[state=active]:bg-background">Request JSON</TabsTrigger>
+                <TabsTrigger value="response" className="data-[state=active]:bg-background">Response</TabsTrigger>
+              </TabsList>
+              <TabsContent value="curl">
+                <div className="relative">
+                  <pre className="bg-muted p-4 rounded-lg overflow-x-auto font-mono text-sm">
+                    {apiInfo.curl}
+                  </pre>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+                  >
+                    Copy
+                  </Button>
+                </div>
+              </TabsContent>
+            </Tabs>
+
+            <div className="mt-4 flex items-center gap-2">
+              <Database className="h-4 w-4 text-muted-foreground" />
+              <code className="text-sm bg-muted px-2 py-1 rounded">
+                {apiInfo.endpoint}
+              </code>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="space-y-12">
+          <section>
+            <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+              <Battery className="h-6 w-6 text-primary" />
+              Input Attributes
+            </h2>
+            <div className="overflow-x-auto rounded-lg border border-border/40">
+              <table className="w-full border-collapse bg-background/50">
+                <thead>
+                  <tr className="border-b border-border/40">
+                    <th className="text-left p-4 text-muted-foreground">Attribute</th>
+                    <th className="text-left p-4 text-muted-foreground">Data Type</th>
+                    <th className="text-left p-4 text-muted-foreground">Description</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {apiInfo.inputAttributes.map((attr) => (
+                    <tr key={attr.name} className="hover:bg-muted/50 transition-colors">
+                      <td className="p-4 font-mono text-sm">{attr.name}</td>
+                      <td className="p-4 text-primary/80">{attr.type}</td>
+                      <td className="p-4 text-muted-foreground">{attr.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+              <Database className="h-6 w-6 text-primary" />
+              Response Parameters
+            </h2>
+            <div className="overflow-x-auto rounded-lg border border-border/40">
+              <table className="w-full border-collapse bg-background/50">
+                <thead>
+                  <tr className="border-b border-border/40">
+                    <th className="text-left p-4 text-muted-foreground">Attribute</th>
+                    <th className="text-left p-4 text-muted-foreground">Description</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {apiInfo.responseParameters.map((param) => (
+                    <tr key={param.name} className="hover:bg-muted/50 transition-colors">
+                      <td className="p-4 font-mono text-sm">{param.name}</td>
+                      <td className="p-4 text-muted-foreground">{param.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold mb-6">Response Codes</h2>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xl font-semibold mb-4 text-primary/80">HTTP Status Codes</h3>
+                <div className="overflow-x-auto rounded-lg border border-border/40">
+                  <table className="w-full border-collapse bg-background/50">
+                    <thead>
+                      <tr className="border-b border-border/40">
+                        <th className="text-left p-4 text-muted-foreground">Code</th>
+                        <th className="text-left p-4 text-muted-foreground">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/40">
+                      {apiInfo.statusCodes.map((status) => (
+                        <tr key={status.code} className="hover:bg-muted/50 transition-colors">
+                          <td className="p-4 font-mono text-sm">{status.code}</td>
+                          <td className="p-4 text-muted-foreground">{status.description}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-semibold mb-4 text-primary/80">API Error Codes</h3>
+                <div className="overflow-x-auto rounded-lg border border-border/40">
+                  <table className="w-full border-collapse bg-background/50">
+                    <thead>
+                      <tr className="border-b border-border/40">
+                        <th className="text-left p-4 text-muted-foreground">Code</th>
+                        <th className="text-left p-4 text-muted-foreground">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/40">
+                      {apiInfo.errorCodes.map((error) => (
+                        <tr key={error.code} className="hover:bg-muted/50 transition-colors">
+                          <td className="p-4 font-mono text-sm">{error.code}</td>
+                          <td className="p-4 text-muted-foreground">{error.description}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
-
-      <Card className="mb-8">
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-4 mb-6">
-            <img src="/assets/images/swaggerIcon.png" alt="Swagger" className="w-8 h-8" />
-            <h2 className="text-2xl font-semibold">Try API</h2>
-            <Button className="ml-auto">Try Now</Button>
-          </div>
-
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList>
-              <TabsTrigger value="curl">cURL</TabsTrigger>
-              <TabsTrigger value="request">Request JSON</TabsTrigger>
-              <TabsTrigger value="response">Response</TabsTrigger>
-            </TabsList>
-            <TabsContent value="curl">
-              <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
-                {apiInfo.curl}
-              </pre>
-            </TabsContent>
-          </Tabs>
-
-          <div className="mt-4">
-            <p className="text-sm text-muted-foreground">API Endpoint:</p>
-            <code className="text-sm bg-muted px-2 py-1 rounded">
-              {apiInfo.endpoint}
-            </code>
-          </div>
-        </CardContent>
-      </Card>
-
-      <section className="space-y-8">
-        <div>
-          <h2 className="text-2xl font-semibold mb-4">Input Attributes</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-muted">
-                  <th className="text-left p-4">Attribute</th>
-                  <th className="text-left p-4">Data Type</th>
-                  <th className="text-left p-4">Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {apiInfo.inputAttributes.map((attr, index) => (
-                  <tr key={attr.name} className={index % 2 === 0 ? "bg-background" : "bg-muted/50"}>
-                    <td className="p-4">{attr.name}</td>
-                    <td className="p-4">{attr.type}</td>
-                    <td className="p-4">{attr.description}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-semibold mb-4">Response Parameters</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-muted">
-                  <th className="text-left p-4">Attribute</th>
-                  <th className="text-left p-4">Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {apiInfo.responseParameters.map((param, index) => (
-                  <tr key={param.name} className={index % 2 === 0 ? "bg-background" : "bg-muted/50"}>
-                    <td className="p-4">{param.name}</td>
-                    <td className="p-4">{param.description}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-semibold mb-4">Response Code & Descriptions</h2>
-
-          <h3 className="text-xl font-semibold mb-2">HTTP Status codes</h3>
-          <div className="overflow-x-auto mb-6">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-muted">
-                  <th className="text-left p-4">Status Code</th>
-                  <th className="text-left p-4">Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {apiInfo.statusCodes.map((status, index) => (
-                  <tr key={status.code} className={index % 2 === 0 ? "bg-background" : "bg-muted/50"}>
-                    <td className="p-4">{status.code}</td>
-                    <td className="p-4">{status.description}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <h3 className="text-xl font-semibold mb-2">API Error code</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-muted">
-                  <th className="text-left p-4">Status Code</th>
-                  <th className="text-left p-4">Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {apiInfo.errorCodes.map((error, index) => (
-                  <tr key={error.code} className={index % 2 === 0 ? "bg-background" : "bg-muted/50"}>
-                    <td className="p-4">{error.code}</td>
-                    <td className="p-4">{error.description}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
