@@ -5,6 +5,7 @@ from typing import Optional, List
 from pydantic import BaseModel, Field, validator
 import logging
 import os
+from starlette.responses import JSONResponse
 
 from models import BatteryParameters, SOCRequest, SOHRequest, ResistanceRequest
 from battery_diagnostics import BatteryDiagnostics
@@ -33,33 +34,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# For testing without Firebase
+# For testing without database
 test_db = {
     "diagnostic_history": [],
     "prediction_history": []
 }
 
+@app.on_event("startup")
+async def startup_event():
+    """Execute on application startup"""
+    logger.info("FastAPI application starting up...")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Execute on application shutdown"""
+    logger.info("FastAPI application shutting down...")
+
 @app.get("/")
 async def root():
     """Root endpoint to verify API is running"""
     logger.info("Root endpoint accessed")
-    return {
+    return JSONResponse({
         "status": "online",
         "message": "Welcome to Battery OS API",
         "documentation": "/docs",
         "health_check": "/health"
-    }
+    })
 
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
     logger.info("Health check endpoint accessed")
-    return {
+    return JSONResponse({
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
         "version": "1.0.0",
         "server": "FastAPI"
-    }
+    })
 
 async def verify_api_key(x_api_key: str = Header(...)):
     if not x_api_key:
@@ -170,5 +181,9 @@ async def get_diagnostic_history(user_id: str = Depends(verify_api_key)):
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 5001))
-    uvicorn.run("main:app", host="localhost", port=port, reload=True)
+    try:
+        port = int(os.environ.get("PORT", 5001))
+        logger.info(f"Starting FastAPI server on port {port}")
+        uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+    except Exception as e:
+        logger.error(f"Failed to start server: {e}")
