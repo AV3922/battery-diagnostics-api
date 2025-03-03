@@ -6,28 +6,36 @@ class BatteryDiagnostics:
     # Battery chemistry specifications
     BATTERY_TYPES = {
         # Li-ion battery types with specific voltages
-        "Li-ion_11.1V": { "max_temp": 45, "min_temp": 0, "max_voltage": 12.6, "min_voltage": 8.25 },
-        "Li-ion_14.8V": { "max_temp": 45, "min_temp": 0, "max_voltage": 16.8, "min_voltage": 10.0 },
-        "Li-ion_24V": { "max_temp": 45, "min_temp": 0, "max_voltage": 29.4, "min_voltage": 19.2 },
-        "Li-ion_36V": { "max_temp": 45, "min_temp": 0, "max_voltage": 42.0, "min_voltage": 27.5 },
-        "Li-ion_48V": { "max_temp": 45, "min_temp": 0, "max_voltage": 54.6, "min_voltage": 35.7 },
-        "Li-ion_51.8V": { "max_temp": 45, "min_temp": 0, "max_voltage": 58.8, "min_voltage": 38.5 },
-        "Li-ion_59.2V": { "max_temp": 45, "min_temp": 0, "max_voltage": 67.2, "min_voltage": 44.0 },
-        "Li-ion_62.9V": { "max_temp": 45, "min_temp": 0, "max_voltage": 71.4, "min_voltage": 46.7 },
-        "Li-ion_72V": { "max_temp": 45, "min_temp": 0, "max_voltage": 84.0, "min_voltage": 55.0 },
+        "Li-ion_11.1V": { "max_temp": 45, "min_temp": 0, "max_voltage": 12.6, "min_voltage": 8.25, "nominal_voltage": 11.1 },
+        "Li-ion_14.8V": { "max_temp": 45, "min_temp": 0, "max_voltage": 16.8, "min_voltage": 10.0, "nominal_voltage": 14.8 },
+        "Li-ion_24V": { "max_temp": 45, "min_temp": 0, "max_voltage": 29.4, "min_voltage": 19.2, "nominal_voltage": 24.0 },
+        "Li-ion_36V": { "max_temp": 45, "min_temp": 0, "max_voltage": 42.0, "min_voltage": 27.5, "nominal_voltage": 36.0 },
+        "Li-ion_48V": { "max_temp": 45, "min_temp": 0, "max_voltage": 54.6, "min_voltage": 35.7, "nominal_voltage": 48.0 },
+        "Li-ion_51.8V": { "max_temp": 45, "min_temp": 0, "max_voltage": 58.8, "min_voltage": 38.5, "nominal_voltage": 51.8 },
+        "Li-ion_59.2V": { "max_temp": 45, "min_temp": 0, "max_voltage": 67.2, "min_voltage": 44.0, "nominal_voltage": 59.2 },
+        "Li-ion_62.9V": { "max_temp": 45, "min_temp": 0, "max_voltage": 71.4, "min_voltage": 46.7, "nominal_voltage": 62.9 },
+        "Li-ion_72V": { "max_temp": 45, "min_temp": 0, "max_voltage": 84.0, "min_voltage": 55.0, "nominal_voltage": 72.0 },
         
         # LFP battery types with specific voltages
-        "LFP_12.8V": { "max_temp": 55, "min_temp": -20, "max_voltage": 14.6, "min_voltage": 10.0 },
-        "LFP_24V": { "max_temp": 55, "min_temp": -20, "max_voltage": 29.2, "min_voltage": 20.0 },
-        "LFP_36V": { "max_temp": 55, "min_temp": -20, "max_voltage": 43.8, "min_voltage": 30.0 },
-        "LFP_48V": { "max_temp": 55, "min_temp": -20, "max_voltage": 54.6, "min_voltage": 37.5 },
-        "LFP_51.2V": { "max_temp": 55, "min_temp": -20, "max_voltage": 58.4, "min_voltage": 40.0 },
-        "LFP_60V": { "max_temp": 55, "min_temp": -20, "max_voltage": 69.3, "min_voltage": 47.5 },
-        "LFP_64V": { "max_temp": 55, "min_temp": -20, "max_voltage": 73.0, "min_voltage": 50.0 },
-        "LFP_72V": { "max_temp": 55, "min_temp": -20, "max_voltage": 87.6, "min_voltage": 60.0 },
-        "LFP_102.4V": { "max_temp": 55, "min_temp": -20, "max_voltage": 116.8, "min_voltage": 80.0 },
-        "LFP_121.6V": { "max_temp": 55, "min_temp": -20, "max_voltage": 121.6, "min_voltage": 95.0 },
-        "LFP_128V": { "max_temp": 55, "min_temp": -20, "max_voltage": 128.0, "min_voltage": 100.0 },
+        "LFP_12.8V": { "max_temp": 55, "min_temp": -20, "max_voltage": 14.6, "min_voltage": 10.0, "nominal_voltage": 12.8 },
+        "LFP_24V": { "max_temp": 55, "min_temp": -20, "max_voltage": 29.2, "min_voltage": 20.0, "nominal_voltage": 24.0 },
+        "LFP_36V": { "max_temp": 55, "min_temp": -20, "max_voltage": 43.8, "min_voltage": 30.0, "nominal_voltage": 36.0 },
+        "LFP_48V": { "max_temp": 55, "min_temp": -20, "max_voltage": 54.6, "min_voltage": 37.5, "nominal_voltage": 48.0 },
+        "LFP_51.2V": { "max_temp": 55, "min_temp": -20, "max_voltage": 58.4, "min_voltage": 40.0, "nominal_voltage": 51.2 },
+        "LFP_60V": { "max_temp": 55, "min_temp": -20, "max_voltage": 69.3, "min_voltage": 47.5, "nominal_voltage": 60.0 },
+        "LFP_64V": { "max_temp": 55, "min_temp": -20, "max_voltage": 73.0, "min_voltage": 50.0, "nominal_voltage": 64.0 },
+        "LFP_72V": { "max_temp": 55, "min_temp": -20, "max_voltage": 87.6, "min_voltage": 60.0, "nominal_voltage": 72.0 },
+        "LFP_102.4V": { "max_temp": 55, "min_temp": -20, "max_voltage": 116.8, "min_voltage": 80.0, "nominal_voltage": 102.4 },
+        "LFP_121.6V": { "max_temp": 55, "min_temp": -20, "max_voltage": 121.6, "min_voltage": 95.0, "nominal_voltage": 121.6 },
+        "LFP_128V": { "max_temp": 55, "min_temp": -20, "max_voltage": 128.0, "min_voltage": 100.0, "nominal_voltage": 128.0 },
+        
+        # Lead-acid battery types with specific voltages
+        "Lead-acid_6V": { "max_temp": 40, "min_temp": -15, "max_voltage": 7.2, "min_voltage": 4.2, "nominal_voltage": 6.0 },
+        "Lead-acid_12V": { "max_temp": 40, "min_temp": -15, "max_voltage": 14.4, "min_voltage": 8.4, "nominal_voltage": 12.0 },
+        "Lead-acid_24V": { "max_temp": 40, "min_temp": -15, "max_voltage": 28.8, "min_voltage": 16.8, "nominal_voltage": 24.0 },
+        "Lead-acid_36V": { "max_temp": 40, "min_temp": -15, "max_voltage": 43.2, "min_voltage": 25.2, "nominal_voltage": 36.0 },
+        "Lead-acid_48V": { "max_temp": 40, "min_temp": -15, "max_voltage": 57.6, "min_voltage": 33.6, "nominal_voltage": 48.0 },
+        "Lead-acid_72V": { "max_temp": 40, "min_temp": -15, "max_voltage": 86.4, "min_voltage": 50.4, "nominal_voltage": 72.0 },
         
         # Generic types for custom nominal voltages
         "Li-ion": {
