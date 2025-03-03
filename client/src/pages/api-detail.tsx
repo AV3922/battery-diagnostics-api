@@ -11,7 +11,7 @@ const API_DETAILS = {
     name: "Voltage Analysis API",
     version: "v1",
     description: "Monitor and analyze battery voltage levels",
-    endpoint: "/api/diagnostics/voltage",
+    endpoint: "/api/v1/diagnostics/voltage",
     curl: `curl -X "POST" \\
 "https://api.batteryos.com/api/v1/diagnostics/voltage" \\
 -H "accept: */*" \\
@@ -60,7 +60,7 @@ const API_DETAILS = {
     name: "State of Charge API",
     version: "v1",
     description: "Calculate real-time battery charge levels using voltage-based SOC estimation",
-    endpoint: "/api/diagnostics/soc",
+    endpoint: "/api/v1/diagnostics/soc",
     curl: `curl -X "POST" \\
 "https://api.batteryos.com/api/v1/diagnostics/soc" \\
 -H "accept: */*" \\
@@ -92,22 +92,22 @@ const API_DETAILS = {
       { code: "E002", description: "Voltage out of range" },
       { code: "E003", description: "Temperature out of range" }
     ],
-        requestExample: {
-            "batteryType": "Li-ion",
-            "voltage": 3.7,
-            "temperature": 25
-        },
-        responseExample: {
-            "stateOfCharge": 85,
-            "estimatedRange": 150,
-            "chargingStatus": "Discharging"
-        }
+    requestExample: {
+        "batteryType": "Li-ion",
+        "voltage": 3.7,
+        "temperature": 25
+    },
+    responseExample: {
+        "stateOfCharge": 85,
+        "estimatedRange": 150,
+        "chargingStatus": "Discharging"
+    }
   },
   "soh": {
     name: "State of Health API",
     version: "v1",
     description: "Determine battery health status by comparing current vs rated capacity",
-    endpoint: "/api/diagnostics/soh",
+    endpoint: "/api/v1/diagnostics/soh",
     curl: `curl -X "POST" \\
 "https://api.batteryos.com/api/v1/diagnostics/soh" \\
 -H "accept: */*" \\
@@ -142,24 +142,24 @@ const API_DETAILS = {
       { code: "E002", description: "Invalid capacity values" },
       { code: "E003", description: "Cycle count out of range" }
     ],
-        requestExample: {
-            "batteryType": "Li-ion",
-            "currentCapacity": 2800,
-            "ratedCapacity": 3000,
-            "cycleCount": 250
-        },
-        responseExample: {
-            "stateOfHealth": 93,
-            "capacityLoss": 7,
-            "healthStatus": "Good",
-            "recommendedAction": "None"
-        }
+    requestExample: {
+        "batteryType": "Li-ion",
+        "currentCapacity": 2800,
+        "ratedCapacity": 3000,
+        "cycleCount": 250
+    },
+    responseExample: {
+        "stateOfHealth": 93,
+        "capacityLoss": 7,
+        "healthStatus": "Good",
+        "recommendedAction": "None"
+    }
   },
   "resistance": {
     name: "Internal Resistance API",
     version: "v1",
     description: "Measure battery internal resistance for performance analysis",
-    endpoint: "/api/diagnostics/resistance",
+    endpoint: "/api/v1/diagnostics/resistance",
     curl: `curl -X "POST" \\
 "https://api.batteryos.com/api/v1/diagnostics/resistance" \\
 -H "accept: */*" \\
@@ -193,23 +193,23 @@ const API_DETAILS = {
       { code: "E002", description: "Invalid measurement values" },
       { code: "E003", description: "Temperature out of range" }
     ],
-        requestExample: {
-            "batteryType": "Li-ion",
-            "voltage": 3.7,
-            "current": 1.0,
-            "temperature": 25
-        },
-        responseExample: {
-            "internalResistance": 15,
-            "resistanceStatus": "Normal",
-            "powerLoss": 0.05
-        }
+    requestExample: {
+        "batteryType": "Li-ion",
+        "voltage": 3.7,
+        "current": 1.0,
+        "temperature": 25
+    },
+    responseExample: {
+        "internalResistance": 15,
+        "resistanceStatus": "Normal",
+        "powerLoss": 0.05
+    }
   },
   "capacity-fade": {
     name: "Capacity Fade Analysis API",
     version: "v1",
     description: "Track capacity degradation over time and usage cycles",
-    endpoint: "/api/diagnostics/capacity-fade",
+    endpoint: "/api/v1/diagnostics/capacity-fade",
     curl: `curl -X "POST" \\
 "https://api.batteryos.com/api/v1/diagnostics/capacity-fade" \\
 -H "accept: */*" \\
@@ -246,25 +246,25 @@ const API_DETAILS = {
       { code: "E002", description: "Invalid capacity values" },
       { code: "E003", description: "Invalid service time" }
     ],
-        requestExample: {
-            "batteryType": "Li-ion",
-            "initialCapacity": 3000,
-            "currentCapacity": 2700,
-            "cycleCount": 300,
-            "timeInService": 365
-        },
-        responseExample: {
-            "capacityFade": 10,
-            "fadeRate": 0.03,
-            "projectedLifetime": 1000,
-            "recommendedAction": "Monitor closely"
-        }
+    requestExample: {
+        "batteryType": "Li-ion",
+        "initialCapacity": 3000,
+        "currentCapacity": 2700,
+        "cycleCount": 300,
+        "timeInService": 365
+    },
+    responseExample: {
+        "capacityFade": 10,
+        "fadeRate": 0.03,
+        "projectedLifetime": 1000,
+        "recommendedAction": "Monitor closely"
+    }
   },
   "cell-balance": {
     name: "Cell Imbalance Detection API",
     version: "v1",
     description: "Monitor individual cell voltages and detect dangerous imbalances",
-    endpoint: "/api/diagnostics/cell-balance",
+    endpoint: "/api/v1/diagnostics/cell-balance",
     curl: `curl -X "POST" \\
 "https://api.batteryos.com/api/v1/diagnostics/cell-balance" \\
 -H "accept: */*" \\
@@ -296,22 +296,22 @@ const API_DETAILS = {
       { code: "E002", description: "Invalid cell voltage readings" },
       { code: "E003", description: "Temperature out of range" }
     ],
-        requestExample: {
-            "batteryType": "Li-ion",
-            "cellVoltages": [3.9, 3.85, 3.92, 3.88],
-            "temperature": 25
-        },
-        responseExample: {
-            "maxImbalance": 0.07,
-            "balanceStatus": "Good",
-            "problematicCells": []
-        }
+    requestExample: {
+        "batteryType": "Li-ion",
+        "cellVoltages": [3.9, 3.85, 3.92, 3.88],
+        "temperature": 25
+    },
+    responseExample: {
+        "maxImbalance": 0.07,
+        "balanceStatus": "Good",
+        "problematicCells": []
+    }
   },
   "cycle-life": {
     name: "Cycle Life Estimation API",
     version: "v1",
     description: "Predict remaining battery life based on degradation patterns",
-    endpoint: "/api/diagnostics/cycle-life",
+    endpoint: "/api/v1/diagnostics/cycle-life",
     curl: `curl -X "POST" \\
 "https://api.batteryos.com/api/v1/diagnostics/cycle-life" \\
 -H "accept: */*" \\
@@ -347,24 +347,24 @@ const API_DETAILS = {
       { code: "E002", description: "Invalid cycle parameters" },
       { code: "E003", description: "Temperature out of range" }
     ],
-        requestExample: {
-            "batteryType": "Li-ion",
-            "cycleCount": 500,
-            "depthOfDischarge": 80,
-            "averageTemperature": 25,
-            "currentSOH": 90
-        },
-        responseExample: {
-            "remainingCycles": 1000,
-            "estimatedEOL": "2026-03-15",
-            "confidenceLevel": 95
-        }
+    requestExample: {
+        "batteryType": "Li-ion",
+        "cycleCount": 500,
+        "depthOfDischarge": 80,
+        "averageTemperature": 25,
+        "currentSOH": 90
+    },
+    responseExample: {
+        "remainingCycles": 1000,
+        "estimatedEOL": "2026-03-15",
+        "confidenceLevel": 95
+    }
   },
   "safety-monitor": {
     name: "Safety Monitoring API",
     version: "v1",
     description: "Real-time monitoring of voltage, temperature, and current for safety risks",
-    endpoint: "/api/diagnostics/safety",
+    endpoint: "/api/v1/diagnostics/safety",
     curl: `curl -X "POST" \\
 "https://api.batteryos.com/api/v1/diagnostics/safety" \\
 -H "accept: */*" \\
@@ -401,25 +401,25 @@ const API_DETAILS = {
       { code: "E002", description: "Parameters out of safe range" },
       { code: "E003", description: "Critical safety violation" }
     ],
-        requestExample: {
-            "batteryType": "Li-ion",
-            "voltage": 3.7,
-            "current": 2.0,
-            "temperature": 35,
-            "pressure": 1.0
-        },
-        responseExample: {
-            "safetyStatus": "Safe",
-            "riskLevel": "Low",
-            "warningFlags": [],
-            "recommendedActions": []
-        }
+    requestExample: {
+        "batteryType": "Li-ion",
+        "voltage": 3.7,
+        "current": 2.0,
+        "temperature": 35,
+        "pressure": 1.0
+    },
+    responseExample: {
+        "safetyStatus": "Safe",
+        "riskLevel": "Low",
+        "warningFlags": [],
+        "recommendedActions": []
+    }
   },
   "thermal-analysis": {
     name: "Thermal Analysis API",
     version: "v1",
     description: "Temperature monitoring and thermal runaway risk detection",
-    endpoint: "/api/diagnostics/thermal",
+    endpoint: "/api/v1/diagnostics/thermal",
     curl: `curl -X "POST" \\
 "https://api.batteryos.com/api/v1/diagnostics/thermal" \\
 -H "accept: */*" \\
@@ -456,25 +456,25 @@ const API_DETAILS = {
       { code: "E002", description: "Temperature out of range" },
       { code: "E003", description: "Invalid load profile" }
     ],
-        requestExample: {
-            "batteryType": "Li-ion",
-            "temperature": 35,
-            "rateOfChange": 0.5,
-            "ambientTemperature": 25,
-            "loadProfile": "high"
-        },
-        responseExample: {
-            "thermalStatus": "Normal",
-            "runawayRisk": 2,
-            "coolingNeeded": "None",
-            "temperatureMargin": 15
-        }
+    requestExample: {
+        "batteryType": "Li-ion",
+        "temperature": 35,
+        "rateOfChange": 0.5,
+        "ambientTemperature": 25,
+        "loadProfile": "high"
+    },
+    responseExample: {
+        "thermalStatus": "Normal",
+        "runawayRisk": 2,
+        "coolingNeeded": "None",
+        "temperatureMargin": 15
+    }
   },
   "fault-detection": {
     name: "Fault Detection API",
     version: "v1",
     description: "Detect and diagnose battery faults including internal damage and reverse current",
-    endpoint: "/api/diagnostics/faults",
+    endpoint: "/api/v1/diagnostics/faults",
     curl: `curl -X "POST" \\
 "https://api.batteryos.com/api/v1/diagnostics/faults" \\
 -H "accept: */*" \\
@@ -511,19 +511,19 @@ const API_DETAILS = {
       { code: "E002", description: "Invalid measurement values" },
       { code: "E003", description: "Critical fault detected" }
     ],
-        requestExample: {
-            "batteryType": "Li-ion",
-            "voltage": 3.7,
-            "current": -0.1,
-            "temperature": 40,
-            "impedance": 150
-        },
-        responseExample: {
-            "faultStatus": "Reverse Current",
-            "faultType": "Electrical",
-            "severity": "High",
-            "recommendedActions": ["Inspect wiring", "Check for shorts"]
-        }
+    requestExample: {
+        "batteryType": "Li-ion",
+        "voltage": 3.7,
+        "current": -0.1,
+        "temperature": 40,
+        "impedance": 150
+    },
+    responseExample: {
+        "faultStatus": "Reverse Current",
+        "faultType": "Electrical",
+        "severity": "High",
+        "recommendedActions": ["Inspect wiring", "Check for shorts"]
+    }
   }
 };
 
@@ -626,13 +626,16 @@ export default function ApiDetail() {
           </CardContent>
         </Card>
 
-        {/* API Endpoint section - Moved here */}
-        <div className="mb-8 bg-muted rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>API Endpoint : </span>
-            <code className="font-mono bg-background px-2 py-1 rounded">
-              {apiInfo.endpoint}
-            </code>
+        {/* API Endpoint section - Updated with complete URLs */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold mb-4 text-foreground">API Endpoint</h2>
+          <div className="bg-muted rounded-lg p-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>API Endpoint : </span>
+              <code className="font-mono bg-background px-2 py-1 rounded">
+                https://api.batteryos.com{apiInfo.endpoint}
+              </code>
+            </div>
           </div>
         </div>
 
