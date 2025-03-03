@@ -221,4 +221,5 @@ def test_diagnostic_history():
 
 if __name__ == "__main__":
     print("\n===== RUNNING API TESTS =====")
-    pytest.main([__file__, "-v"])
+    # Run pytest with -v (verbose) and -s (show print statements) flags
+    pytest.main([__file__, "-v", "-s"])
