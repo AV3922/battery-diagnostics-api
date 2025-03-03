@@ -120,6 +120,8 @@ async def health_check():
 @app.post("/battery/diagnose/soc")
 async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate State of Charge based on voltage"""
+    if not x_api_key:
+        raise HTTPException(status_code=422, detail="API key is required")
     try:
         logger.info(f"SOC diagnosis for {request.batteryType} battery with nominal voltage {request.nominalVoltage}V")
         result = BatteryDiagnostics.calculate_soc(
@@ -148,6 +150,8 @@ async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(No
 @app.get("/battery/logs")
 async def get_diagnostic_history(x_api_key: Optional[str] = Header(None)):
     """Retrieve battery diagnostic history"""
+    if not x_api_key:
+        raise HTTPException(status_code=422, detail="API key is required")
     try:
         logger.info("Retrieving diagnostic history")
         return JSONResponse({
@@ -160,6 +164,8 @@ async def get_diagnostic_history(x_api_key: Optional[str] = Header(None)):
 @app.post("/battery/diagnose/soh")
 async def diagnose_soh(request: SOHRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate State of Health based on capacity"""
+    if not x_api_key:
+        raise HTTPException(status_code=422, detail="API key is required")
     try:
         logger.info(f"SOH diagnosis for {request.batteryType} battery")
         result = BatteryDiagnostics.calculate_soh(
@@ -187,6 +193,8 @@ async def diagnose_soh(request: SOHRequest, x_api_key: Optional[str] = Header(No
 @app.post("/battery/diagnose/resistance")
 async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate internal resistance"""
+    if not x_api_key:
+        raise HTTPException(status_code=422, detail="API key is required")
     try:
         logger.info(f"Resistance diagnosis for {request.batteryType} battery")
         result = BatteryDiagnostics.measure_internal_resistance(
