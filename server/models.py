@@ -25,16 +25,19 @@ class BatteryParameters(BaseModel):
         return self
 
 class SOCRequest(BaseModel):
-    batteryType: str = Field(..., description="Battery chemistry type (Li-ion, LFP, Lead-acid)")
+    batteryType: str = Field(..., description="Battery chemistry type (e.g., Li-ion_24V, LFP_48V)")
     nominalVoltage: float = Field(..., description="Nominal voltage of the battery")
     voltage: float = Field(..., description="Current battery voltage")
     temperature: float = Field(..., description="Battery temperature in Celsius")
 
     @model_validator(mode='after')
     def validate_parameters(self) -> 'SOCRequest':
-        valid_types = ["Li-ion", "LFP", "Lead-acid"]
+        from battery_diagnostics import BatteryDiagnostics
+        
+        valid_types = list(BatteryDiagnostics.BATTERY_TYPES.keys())
         if self.batteryType not in valid_types:
-            raise ValueError(f"Battery type must be one of {valid_types}")
+            valid_type_examples = ["Li-ion_24V", "LFP_48V", "Li-ion", "LFP", "Lead-acid"]
+            raise ValueError(f"Battery type '{self.batteryType}' is not valid. Examples of valid types: {valid_type_examples}")
             
         if self.nominalVoltage <= 0 or self.nominalVoltage > 500:
             raise ValueError("Nominal voltage must be positive and less than 500V")

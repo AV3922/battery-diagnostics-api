@@ -5,6 +5,31 @@ from datetime import datetime, timedelta
 class BatteryDiagnostics:
     # Battery chemistry specifications
     BATTERY_TYPES = {
+        # Li-ion battery types with specific voltages
+        "Li-ion_11.1V": { "max_temp": 45, "min_temp": 0, "max_voltage": 12.6, "min_voltage": 8.25 },
+        "Li-ion_14.8V": { "max_temp": 45, "min_temp": 0, "max_voltage": 16.8, "min_voltage": 10.0 },
+        "Li-ion_24V": { "max_temp": 45, "min_temp": 0, "max_voltage": 29.4, "min_voltage": 19.2 },
+        "Li-ion_36V": { "max_temp": 45, "min_temp": 0, "max_voltage": 42.0, "min_voltage": 27.5 },
+        "Li-ion_48V": { "max_temp": 45, "min_temp": 0, "max_voltage": 54.6, "min_voltage": 35.7 },
+        "Li-ion_51.8V": { "max_temp": 45, "min_temp": 0, "max_voltage": 58.8, "min_voltage": 38.5 },
+        "Li-ion_59.2V": { "max_temp": 45, "min_temp": 0, "max_voltage": 67.2, "min_voltage": 44.0 },
+        "Li-ion_62.9V": { "max_temp": 45, "min_temp": 0, "max_voltage": 71.4, "min_voltage": 46.7 },
+        "Li-ion_72V": { "max_temp": 45, "min_temp": 0, "max_voltage": 84.0, "min_voltage": 55.0 },
+        
+        # LFP battery types with specific voltages
+        "LFP_12.8V": { "max_temp": 55, "min_temp": -20, "max_voltage": 14.6, "min_voltage": 10.0 },
+        "LFP_24V": { "max_temp": 55, "min_temp": -20, "max_voltage": 29.2, "min_voltage": 20.0 },
+        "LFP_36V": { "max_temp": 55, "min_temp": -20, "max_voltage": 43.8, "min_voltage": 30.0 },
+        "LFP_48V": { "max_temp": 55, "min_temp": -20, "max_voltage": 54.6, "min_voltage": 37.5 },
+        "LFP_51.2V": { "max_temp": 55, "min_temp": -20, "max_voltage": 58.4, "min_voltage": 40.0 },
+        "LFP_60V": { "max_temp": 55, "min_temp": -20, "max_voltage": 69.3, "min_voltage": 47.5 },
+        "LFP_64V": { "max_temp": 55, "min_temp": -20, "max_voltage": 73.0, "min_voltage": 50.0 },
+        "LFP_72V": { "max_temp": 55, "min_temp": -20, "max_voltage": 87.6, "min_voltage": 60.0 },
+        "LFP_102.4V": { "max_temp": 55, "min_temp": -20, "max_voltage": 116.8, "min_voltage": 80.0 },
+        "LFP_121.6V": { "max_temp": 55, "min_temp": -20, "max_voltage": 121.6, "min_voltage": 95.0 },
+        "LFP_128V": { "max_temp": 55, "min_temp": -20, "max_voltage": 128.0, "min_voltage": 100.0 },
+        
+        # Generic types for custom nominal voltages
         "Li-ion": {
             "max_temp": 45, 
             "min_temp": 0,
@@ -26,22 +51,53 @@ class BatteryDiagnostics:
     }
     
     @staticmethod
-    def get_battery_specs(battery_type: str, nominal_voltage: float):
+    def get_battery_specs(battery_type: str, nominal_voltage: float = None):
         """Generate battery specifications based on type and nominal voltage"""
-        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
-            raise ValueError(f"Unknown battery type: {battery_type}")
-        
-        specs = BatteryDiagnostics.BATTERY_TYPES[battery_type].copy()
-        specs["nominal_voltage"] = nominal_voltage
-        specs["max_voltage"] = nominal_voltage * specs["max_voltage_factor"]
-        specs["min_voltage"] = nominal_voltage * specs["min_voltage_factor"]
-        
-        return specs
+        # First check if this is a specific battery type with predefined voltages
+        if battery_type in BatteryDiagnostics.BATTERY_TYPES:
+            specs = BatteryDiagnostics.BATTERY_TYPES[battery_type].copy()
+            
+            # For specific battery types with predefined voltages (e.g. "Li-ion_24V")
+            if "max_voltage" in specs and "min_voltage" in specs:
+                # Extract nominal voltage from the battery type string if not provided
+                if not nominal_voltage and "_" in battery_type:
+                    voltage_str = battery_type.split("_")[1].replace("V", "")
+                    try:
+                        specs["nominal_voltage"] = float(voltage_str)
+                    except ValueError:
+                        if nominal_voltage:
+                            specs["nominal_voltage"] = nominal_voltage
+                        else:
+                            raise ValueError(f"Cannot determine nominal voltage for {battery_type}")
+                else:
+                    specs["nominal_voltage"] = nominal_voltage if nominal_voltage else 0
+                
+                return specs
+            
+            # For generic battery types that use voltage factors
+            if nominal_voltage is None:
+                raise ValueError(f"Nominal voltage must be provided for generic battery type: {battery_type}")
+                
+            specs["nominal_voltage"] = nominal_voltage
+            specs["max_voltage"] = nominal_voltage * specs["max_voltage_factor"]
+            specs["min_voltage"] = nominal_voltage * specs["min_voltage_factor"]
+            
+            return specs
+            
+        raise ValueError(f"Unknown battery type: {battery_type}")
 
     @staticmethod
     def _validate_temperature(temperature: float, battery_type: str) -> float:
         """Validate and calculate temperature compensation factor"""
-        specs = BatteryDiagnostics.BATTERY_SPECS[battery_type]
+        # Extract the base battery type if it's a specific voltage variant
+        base_type = battery_type.split("_")[0] if "_" in battery_type else battery_type
+        
+        # Use the base type to get temperature limits
+        if base_type in ["Li-ion", "LFP", "Lead-acid"]:
+            specs = BatteryDiagnostics.BATTERY_TYPES[base_type]
+        else:
+            specs = BatteryDiagnostics.BATTERY_TYPES[battery_type]
+            
         if temperature > specs["max_temp"]:
             raise ValueError(f"Temperature {temperature}°C exceeds maximum allowed {specs['max_temp']}°C")
         if temperature < specs["min_temp"]:
