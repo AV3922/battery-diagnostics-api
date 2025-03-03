@@ -1,3 +1,4 @@
+
 from fastapi.testclient import TestClient
 from main import app
 import pytest
@@ -42,12 +43,13 @@ def test_soc_endpoint():
 
     headers = {"x-api-key": "test_key"}
 
-    # Test valid request with valid nominal voltage
+    # Test valid request with valid nominal voltage and current
     valid_data = {
         "batteryType": "Li-ion",
         "voltage": 53.7,
         "temperature": 35.0,
-        "nominalVoltage": 48
+        "nominalVoltage": 48.0,
+        "current": 5.0  # Added current parameter
     }
     print("\n=== SOC ENDPOINT (VALID) ===")
     print(f"Request: POST /battery/diagnose/soc")
@@ -68,7 +70,8 @@ def test_soc_endpoint():
         "batteryType": "Li-ion",
         "voltage": 10.0,
         "temperature": 27.0,
-        "nominalVoltage": 10.5  # Not a predefined value
+        "nominalVoltage": 10.5,  # Not a predefined value
+        "current": 2.0  # Added current parameter
     }
     print("\n=== SOC ENDPOINT (INVALID NOMINAL VOLTAGE) ===")
     print(f"Request: POST /battery/diagnose/soc")
@@ -88,7 +91,8 @@ def test_soc_endpoint():
         "batteryType": "Invalid",
         "voltage": 3.7,
         "temperature": 25.0,
-        "nominalVoltage": 3.6
+        "nominalVoltage": 3.6,
+        "current": 1.0  # Added current parameter
     }
     print("\n=== SOC ENDPOINT (INVALID BATTERY TYPE) ===")
     print(f"Request: POST /battery/diagnose/soc")
@@ -195,7 +199,8 @@ def test_api_key_validation():
         "batteryType": "Li-ion",
         "voltage": 3.7,
         "temperature": 25.0,
-        "nominalVoltage": 3.7
+        "nominalVoltage": 3.7,
+        "current": 1.0  # Added current parameter
     }
     print("\n=== API KEY VALIDATION (MISSING) ===")
     print(f"Request: POST /battery/diagnose/soc")
@@ -222,7 +227,8 @@ def test_diagnostic_history():
         "batteryType": "Li-ion",
         "voltage": 11.1,
         "temperature": 27.0,
-        "nominalVoltage": 12.0
+        "nominalVoltage": 11.1,
+        "current": 1.5  # Added current parameter
     }
     print("\n=== MAKING DIAGNOSTIC REQUEST ===")
     print(f"Request: POST /battery/diagnose/soc")
