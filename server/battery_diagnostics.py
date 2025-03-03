@@ -64,20 +64,23 @@ class BatteryDiagnostics:
             raise ValueError(f"Nominal voltage must be provided for battery type: {battery_type}")
         
         battery_info = BatteryDiagnostics.BATTERY_TYPES[battery_type]
-        voltage_specs = battery_info["voltage_specs"]
-        
-        # Validate that the nominal voltage is one of the predefined values
-        if nominal_voltage not in voltage_specs:
-            available_voltages = list(voltage_specs.keys())
-            raise ValueError(f"Invalid nominal voltage: {nominal_voltage}. Available nominal voltages for {battery_type}: {available_voltages}")
-        
         specs = {
             "max_temp": battery_info["max_temp"],
             "min_temp": battery_info["min_temp"],
-            "nominal_voltage": nominal_voltage,
-            "max_voltage": voltage_specs[nominal_voltage]["max_voltage"],
-            "min_voltage": voltage_specs[nominal_voltage]["min_voltage"]
+            "nominal_voltage": nominal_voltage
         }
+        
+        # Find the closest standard voltage in the voltage specs
+        voltage_specs = battery_info["voltage_specs"]
+        if nominal_voltage in voltage_specs:
+            # Exact match found
+            specs["max_voltage"] = voltage_specs[nominal_voltage]["max_voltage"]
+            specs["min_voltage"] = voltage_specs[nominal_voltage]["min_voltage"]
+        else:
+            # Find the closest standard voltage
+            closest_voltage = min(voltage_specs.keys(), key=lambda x: abs(x - nominal_voltage))
+            specs["max_voltage"] = voltage_specs[closest_voltage]["max_voltage"] * (nominal_voltage / closest_voltage)
+            specs["min_voltage"] = voltage_specs[closest_voltage]["min_voltage"] * (nominal_voltage / closest_voltage)
             
         return specs
 

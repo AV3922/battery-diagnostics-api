@@ -41,12 +41,12 @@ def test_soc_endpoint():
     
     headers = {"x-api-key": "test_key"}
 
-    # Test valid request with valid nominal voltage
+    # Test valid request
     valid_data = {
         "batteryType": "Li-ion",
-        "voltage": 10.0,
+        "voltage": 11.1,
         "temperature": 27.0,
-        "nominalVoltage": 11.1
+        "nominalVoltage": 12.0
     }
     print("\n=== SOC ENDPOINT (VALID) ===")
     print(f"Request: POST /battery/diagnose/soc")
@@ -60,26 +60,6 @@ def test_soc_endpoint():
     print(f"Response: {json.dumps(response.json(), indent=2)}")
     assert response.status_code == 200
     assert "stateOfCharge" in response.json()
-    print("RESULT: PASSED ✓")
-    
-    # Test with invalid nominal voltage
-    invalid_voltage_data = {
-        "batteryType": "Li-ion",
-        "voltage": 10.0,
-        "temperature": 27.0,
-        "nominalVoltage": 10.5  # Not a predefined value
-    }
-    print("\n=== SOC ENDPOINT (INVALID NOMINAL VOLTAGE) ===")
-    print(f"Request: POST /battery/diagnose/soc")
-    print(f"Headers: {json.dumps(headers, indent=2)}")
-    print(f"Request Body: {json.dumps(invalid_voltage_data, indent=2)}")
-    
-    response = client.post("/battery/diagnose/soc", 
-                         json=invalid_voltage_data,
-                         headers=headers)
-    print(f"Status Code: {response.status_code}")
-    print(f"Response: {response.text}")
-    assert response.status_code == 400
     print("RESULT: PASSED ✓")
 
     # Test invalid battery type
