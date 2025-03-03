@@ -129,6 +129,22 @@ async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(No
             nominal_voltage=request.nominalVoltage
         )
 
+        # Store diagnostic history for logs
+        test_db["diagnostic_history"].append({
+            "timestamp": datetime.now().isoformat(),
+            "type": "soc",
+            "batteryType": request.batteryType,
+            "result": result
+        })
+
+        return JSONResponse(result)
+    except ValueError as e:
+        logger.error(f"SOC calculation error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error in SOC diagnosis: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 @app.get("/battery/logs")
 async def get_diagnostic_history(x_api_key: Optional[str] = Header(None)):
     """Retrieve battery diagnostic history"""
@@ -141,23 +157,6 @@ async def get_diagnostic_history(x_api_key: Optional[str] = Header(None)):
         logger.error(f"Error retrieving diagnostic history: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-        
-        # Store diagnostic history for logs
-        test_db["diagnostic_history"].append({
-            "timestamp": datetime.now().isoformat(),
-            "type": "soc",
-            "batteryType": request.batteryType,
-            "result": result
-        })
-        
-        return JSONResponse(result)
-    except ValueError as e:
-        logger.error(f"SOC calculation error: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        logger.error(f"Unexpected error in SOC diagnosis: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-
 @app.post("/battery/diagnose/soh")
 async def diagnose_soh(request: SOHRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate State of Health based on capacity"""
@@ -168,7 +167,7 @@ async def diagnose_soh(request: SOHRequest, x_api_key: Optional[str] = Header(No
             rated_capacity=request.ratedCapacity,
             cycle_count=request.cycleCount
         )
-        
+
         # Store diagnostic history for logs
         test_db["diagnostic_history"].append({
             "timestamp": datetime.now().isoformat(),
@@ -176,7 +175,7 @@ async def diagnose_soh(request: SOHRequest, x_api_key: Optional[str] = Header(No
             "batteryType": request.batteryType,
             "result": result
         })
-        
+
         return JSONResponse(result)
     except ValueError as e:
         logger.error(f"SOH calculation error: {str(e)}")
@@ -196,7 +195,7 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
             temperature=request.temperature,
             battery_type=request.batteryType
         )
-        
+
         # Store diagnostic history for logs
         test_db["diagnostic_history"].append({
             "timestamp": datetime.now().isoformat(),
@@ -204,7 +203,7 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
             "batteryType": request.batteryType,
             "result": result
         })
-        
+
         return JSONResponse(result)
     except ValueError as e:
         logger.error(f"Resistance calculation error: {str(e)}")
