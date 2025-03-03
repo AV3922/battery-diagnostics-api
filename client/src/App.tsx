@@ -7,17 +7,21 @@ import Home from "@/pages/home";
 import ApiList from "@/pages/api-list";
 import ApiDetail from "@/pages/api-detail";
 import Navbar from "@/components/navigation/navbar";
+import Footer from "@/components/footer";
 
 function Router() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/api-list" component={ApiList} />
-        <Route path="/api-detail/:endpoint" component={ApiDetail} />
-        <Route component={NotFound} />
-      </Switch>
+      <main className="flex-1">
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/api-list" component={ApiList} />
+          <Route path="/api-detail/:endpoint" component={ApiDetail} />
+          <Route component={NotFound} />
+        </Switch>
+      </main>
+      <Footer />
     </div>
   );
 }

@@ -44,9 +44,9 @@ def test_soc_endpoint():
     # Test valid request with valid nominal voltage
     valid_data = {
         "batteryType": "Li-ion",
-        "voltage": 10.0,
-        "temperature": 27.0,
-        "nominalVoltage": 11.1
+        "voltage": 53.7,
+        "temperature": 35.0,
+        "nominalVoltage": 48
     }
     print("\n=== SOC ENDPOINT (VALID) ===")
     print(f"Request: POST /battery/diagnose/soc")
@@ -113,7 +113,7 @@ def test_soh_endpoint():
     # Test valid request
     valid_data = {
         "batteryType": "Li-ion",
-        "currentCapacity": 2800,
+        "currentCapacity": 3500,
         "ratedCapacity": 3000,
         "cycleCount": 250
     }

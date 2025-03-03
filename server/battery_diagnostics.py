@@ -110,7 +110,7 @@ class BatteryDiagnostics:
             return 0.9  # Hot impact
 
     @staticmethod
-    def calculate_soc(voltage: float, battery_type: str, temperature: float, nominal_voltage: float) -> Dict:
+    def calculate_soc(voltage: float, battery_type: str, temperature: float, current: float,nominal_voltage: float) -> Dict:
         """Calculate State of Charge using voltage-based estimation with enhanced temperature compensation"""
         if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
             raise ValueError(f"Unknown battery type: {battery_type}")
@@ -136,7 +136,8 @@ class BatteryDiagnostics:
        # soc = soc * temp_factor
 
         # Determine charging status
-        if voltage > specs["nominal_voltage"] * 1.05:
+        if voltage >= specs["max_voltage"] and temperature > specs["max_temp"]:
+            charging = False
             status = "Charging"
         elif voltage < specs["nominal_voltage"] * 0.95:
             status = "Discharging"
@@ -160,7 +161,9 @@ class BatteryDiagnostics:
 
         soh = (current_capacity / rated_capacity) * 100
         capacity_loss = 100 - soh
-
+        if capacity_loss < 0:
+            capacity_loss = 0
+           
         # Enhanced cycle-based degradation analysis
         cycle_factor = min(cycle_count / 1000, 1)  # Normalize to 1000 cycles
         adjusted_soh = soh * (1 - cycle_factor * 0.1)  # Adjust for cycle aging
@@ -267,7 +270,7 @@ class BatteryDiagnostics:
     def monitor_safety(voltage: float, current: float, temperature: float,
                       pressure: float, battery_type: str) -> Dict:
         """Monitor battery safety parameters and assess risks"""
-        specs = BatteryDiagnostics.BATTERY_SPECS[battery_type]
+        specs = BatteryDiagnostics.BATTERY_TYPES[battery_type]
         warnings = []
         risk_level = "Low"
 
