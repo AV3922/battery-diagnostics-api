@@ -1,4 +1,3 @@
-
 from fastapi.testclient import TestClient
 from main import app
 import pytest
@@ -49,7 +48,7 @@ def test_soc_endpoint():
         "voltage": 53.7,
         "temperature": 35.0,
         "nominalVoltage": 48.0,
-        "current": 5.0  # Added current parameter
+        "current": -10.0  # Added current parameter
     }
     print("\n=== SOC ENDPOINT (VALID) ===")
     print(f"Request: POST /battery/diagnose/soc")
