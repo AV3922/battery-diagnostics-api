@@ -1,5 +1,4 @@
-from typing import List, Dict, Optional
-import numpy as np
+from typing import List, Dict
 from datetime import datetime, timedelta
 
 class BatteryDiagnostics:
@@ -135,8 +134,9 @@ class BatteryDiagnostics:
         voltage_normalized = voltage - specs["min_voltage"]
 
         # Non-linear SOC estimation using sigmoid function
-        soc = 100 * (1 / (1 + np.exp(-12 * (voltage_normalized/voltage_range - 0.5))))
-        soc = soc * temp_factor
+       # soc = 100 * (1 / (1 + np.exp(-12 * (voltage_normalized/voltage_range - 0.5))))
+        soc = 100 * ((voltage_normalized/voltage_range))
+       # soc = soc * temp_factor
 
         # Determine charging status
         if voltage > specs["nominal_voltage"] * 1.05:
