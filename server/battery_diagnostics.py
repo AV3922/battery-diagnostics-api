@@ -26,17 +26,17 @@ class BatteryDiagnostics:
             "max_temp": 55, 
             "min_temp": -20,
             "voltage_specs": {
-                12.8: {"max_voltage": 14.6, "min_voltage": 10.0},
-                24.0: {"max_voltage": 29.2, "min_voltage": 20.0},
-                36.0: {"max_voltage": 43.8, "min_voltage": 30.0},
-                48.0: {"max_voltage": 54.6, "min_voltage": 37.5},
-                51.2: {"max_voltage": 58.4, "min_voltage": 40.0},
-                60.0: {"max_voltage": 69.3, "min_voltage": 47.5},
-                64.0: {"max_voltage": 73.0, "min_voltage": 50.0},
-                72.0: {"max_voltage": 87.6, "min_voltage": 60.0},
-                102.4: {"max_voltage": 116.8, "min_voltage": 80.0},
-                121.6: {"max_voltage": 121.6, "min_voltage": 95.0},
-                128.0: {"max_voltage": 128.0, "min_voltage": 100.0}
+                12.8: {"max_voltage": 14.6, "min_voltage": 10.0, "Nominal_Voltage": 12.8},
+                24.0: {"max_voltage": 29.2, "min_voltage": 20.0, "Nominal_Voltage": 24.0},
+                36.0: {"max_voltage": 43.8, "min_voltage": 30.0, "Nominal_Voltage": 36.0},
+                48.0: {"max_voltage": 54.6, "min_voltage": 37.5, "Nominal_Voltage": 48.0},
+                51.2: {"max_voltage": 58.4, "min_voltage": 40.0, "Nominal_Voltage": 51.2},
+                60.0: {"max_voltage": 69.3, "min_voltage": 47.5, "Nominal_Voltage": 60.0},
+                64.0: {"max_voltage": 73.0, "min_voltage": 50.0, "Nominal_Voltage": 64.0},
+                72.0: {"max_voltage": 87.6, "min_voltage": 60.0, "Nominal_Voltage": 72.0},
+                102.4: {"max_voltage": 116.8, "min_voltage": 80.0, "Nominal_Voltage": 102.4},
+                121.6: {"max_voltage": 121.6, "min_voltage": 95.0, "Nominal_Voltage": 121.6},
+                128.0: {"max_voltage": 128.0, "min_voltage": 100.0, "Nominal_Voltage": 128.0}
             }
         },
         
@@ -44,12 +44,12 @@ class BatteryDiagnostics:
             "max_temp": 40, 
             "min_temp": -15,
             "voltage_specs": {
-                6.0: {"max_voltage": 7.2, "min_voltage": 4.2},
-                12.0: {"max_voltage": 14.4, "min_voltage": 8.4},
-                24.0: {"max_voltage": 28.8, "min_voltage": 16.8},
-                36.0: {"max_voltage": 43.2, "min_voltage": 25.2},
-                48.0: {"max_voltage": 57.6, "min_voltage": 33.6},
-                72.0: {"max_voltage": 86.4, "min_voltage": 50.4}
+                6.0: {"max_voltage": 7.2, "min_voltage": 4.2, "Nominal_Voltage": 6.0},
+                12.0: {"max_voltage": 14.4, "min_voltage": 8.4, "Nominal_Voltage": 12.0},
+                24.0: {"max_voltage": 28.8, "min_voltage": 16.8, "Nominal_Voltage": 24.0},
+                36.0: {"max_voltage": 43.2, "min_voltage": 25.2, "Nominal_Voltage": 36.0},
+                48.0: {"max_voltage": 57.6, "min_voltage": 33.6, "Nominal_Voltage": 48.0},
+                72.0: {"max_voltage": 86.4, "min_voltage": 50.4, "Nominal_Voltage": 72.0}
             }
         }
             
