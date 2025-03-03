@@ -564,16 +564,6 @@ export default function ApiDetail() {
           </div>
         </div>
 
-        {/* Add API Endpoint section */}
-        <div className="mb-8 bg-muted rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>API Endpoint : </span>
-            <code className="font-mono bg-background px-2 py-1 rounded">
-              {apiInfo.endpoint}
-            </code>
-          </div>
-        </div>
-
         <Card className="mb-8 border-border/40 bg-background/50 backdrop-blur">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4 mb-6">
@@ -633,15 +623,18 @@ export default function ApiDetail() {
                 </div>
               </TabsContent>
             </Tabs>
-
-            <div className="mt-4 flex items-center gap-2">
-              <Database className="h-4 w-4 text-muted-foreground" />
-              <code className="text-sm bg-muted px-2 py-1 rounded">
-                {apiInfo.endpoint}
-              </code>
-            </div>
           </CardContent>
         </Card>
+
+        {/* API Endpoint section - Moved here */}
+        <div className="mb-8 bg-muted rounded-lg p-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>API Endpoint : </span>
+            <code className="font-mono bg-background px-2 py-1 rounded">
+              {apiInfo.endpoint}
+            </code>
+          </div>
+        </div>
 
         <div className="space-y-12">
           <section>
@@ -702,7 +695,7 @@ export default function ApiDetail() {
             <div className="space-y-6">
               <div>
                 <h3 className="text-xl font-semibold mb-4 text-primary/80">HTTP Status Codes</h3>
-                <div className="overflow-x-auto rounded-lg border border-border/40">
+                <div className="overflowx-auto rounded-lg border border-border/40">
                   <table className="w-full border-collapse bg-background/50">
                     <thead>
                       <tr className="border-b border-border/40">
