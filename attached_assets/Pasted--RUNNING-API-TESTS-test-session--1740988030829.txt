@@ -1,0 +1,24 @@
+===== RUNNING API TESTS =====
+======================================================= test session starts =======================================================
+platform linux -- Python 3.11.10, pytest-8.3.4, pluggy-1.5.0 -- /home/runner/workspace/.pythonlibs/bin/python
+cachedir: .pytest_cache
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: anyio-4.8.0
+collected 6 items                                                                                                                 
+
+server/test_api.py::test_health_endpoints PASSED                                                                            [ 16%]
+server/test_api.py::test_soc_endpoint PASSED                                                                                [ 33%]
+server/test_api.py::test_soh_endpoint PASSED                                                                                [ 50%]
+server/test_api.py::test_resistance_endpoint PASSED                                                                         [ 66%]
+server/test_api.py::test_api_key_validation PASSED                                                                          [ 83%]
+server/test_api.py::test_diagnostic_history PASSED                                                                          [100%]
+
+======================================================== warnings summary =========================================================
+.pythonlibs/lib/python3.11/site-packages/_pytest/config/__init__.py:1277
+.pythonlibs/lib/python3.11/site-packages/_pytest/config/__init__.py:1277
+  /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/_pytest/config/__init__.py:1277: PytestAssertRewriteWarning: Module already imported so cannot be rewritten: anyio
+    self._mark_plugins_for_rewrite(hook)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================================== 6 passed, 2 warnings in 0.10s ==================================================
