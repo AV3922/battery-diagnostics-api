@@ -128,6 +128,7 @@ async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(No
             voltage=request.voltage,
             battery_type=request.batteryType,
             temperature=request.temperature,
+            current=request.current,
             nominal_voltage=request.nominalVoltage
         )
 

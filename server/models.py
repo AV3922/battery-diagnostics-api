@@ -29,6 +29,7 @@ class SOCRequest(BaseModel):
     nominalVoltage: float = Field(..., description="Nominal voltage of the battery")
     voltage: float = Field(..., description="Current battery voltage")
     temperature: float = Field(..., description="Battery temperature in Celsius")
+    current: float = Field(..., description="Current flow in amperes")
 
     @model_validator(mode='after')
     def validate_parameters(self) -> 'SOCRequest':
