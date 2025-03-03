@@ -10,7 +10,7 @@ class BatteryDiagnostics:
             "max_temp": 45, 
             "min_temp": 0,
             "voltage_specs": {
-                11.1: {"max_voltage": 12.6, "min_voltage": 8.25},
+               "Nominal_Voltage": 11.1: {"max_voltage": 12.6, "min_voltage": 8.25},
                 14.8: {"max_voltage": 16.8, "min_voltage": 10.0},
                 24.0: {"max_voltage": 29.4, "min_voltage": 19.2},
                 36.0: {"max_voltage": 42.0, "min_voltage": 27.5},
@@ -52,23 +52,7 @@ class BatteryDiagnostics:
                 72.0: {"max_voltage": 86.4, "min_voltage": 50.4}
             }
         }
-            "max_temp": 45, 
-            "min_temp": 0,
-            "max_voltage_factor": 1.135,  # Max voltage is ~113.5% of nominal for Li-ion
-            "min_voltage_factor": 0.75    # Min voltage is ~75% of nominal for Li-ion
-        },
-        "LFP": {
-            "max_temp": 55, 
-            "min_temp": -20,
-            "max_voltage_factor": 1.15,   # Max voltage is ~115% of nominal for LFP
-            "min_voltage_factor": 0.8     # Min voltage is ~80% of nominal for LFP
-        },
-        "Lead-acid": {
-            "max_temp": 40, 
-            "min_temp": -15,
-            "max_voltage_factor": 1.20,   # Max voltage is ~120% of nominal for Lead-acid
-            "min_voltage_factor": 0.7     # Min voltage is ~70% of nominal for Lead-acid
-        }
+            
     }
     
     @staticmethod
