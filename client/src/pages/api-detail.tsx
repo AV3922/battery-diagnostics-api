@@ -564,6 +564,16 @@ export default function ApiDetail() {
           </div>
         </div>
 
+        {/* Add API Endpoint section */}
+        <div className="mb-8 bg-muted rounded-lg p-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>API Endpoint : </span>
+            <code className="font-mono bg-background px-2 py-1 rounded">
+              {apiInfo.endpoint}
+            </code>
+          </div>
+        </div>
+
         <Card className="mb-8 border-border/40 bg-background/50 backdrop-blur">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4 mb-6">
