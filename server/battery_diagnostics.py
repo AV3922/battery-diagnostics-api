@@ -10,15 +10,15 @@ class BatteryDiagnostics:
             "max_temp": 45, 
             "min_temp": 0,
             "voltage_specs": {
-               "Nominal_Voltage": 11.1: {"max_voltage": 12.6, "min_voltage": 8.25},
-                14.8: {"max_voltage": 16.8, "min_voltage": 10.0},
-                24.0: {"max_voltage": 29.4, "min_voltage": 19.2},
-                36.0: {"max_voltage": 42.0, "min_voltage": 27.5},
-                48.0: {"max_voltage": 54.6, "min_voltage": 35.7},
-                51.8: {"max_voltage": 58.8, "min_voltage": 38.5},
-                59.2: {"max_voltage": 67.2, "min_voltage": 44.0},
-                62.9: {"max_voltage": 71.4, "min_voltage": 46.7},
-                72.0: {"max_voltage": 84.0, "min_voltage": 55.0}
+                11.1: {"max_voltage": 12.6, "min_voltage": 8.25, "Nominal_Voltage": 11.1},
+                14.8: {"max_voltage": 16.8, "min_voltage": 10.0, "Nominal_Voltage": 14.8},
+                24.0: {"max_voltage": 29.4, "min_voltage": 19.2, "Nominal_Voltage": 24.0},
+                36.0: {"max_voltage": 42.0, "min_voltage": 27.5, "Nominal_Voltage": 36.0},
+                48.0: {"max_voltage": 54.6, "min_voltage": 35.7, "Nominal_Voltage": 48.0},
+                51.8: {"max_voltage": 58.8, "min_voltage": 38.5, "Nominal_Voltage": 51.8},
+                59.2: {"max_voltage": 67.2, "min_voltage": 44.0, "Nominal_Voltage": 59.2},
+                62.9: {"max_voltage": 71.4, "min_voltage": 46.7, "Nominal_Voltage": 62.9},
+                72.0: {"max_voltage": 84.0, "min_voltage": 55.0, "Nominal_Voltage": 72.0}
             }
         },
         
