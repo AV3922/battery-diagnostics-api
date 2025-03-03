@@ -3,29 +3,40 @@ import numpy as np
 from datetime import datetime, timedelta
 
 class BatteryDiagnostics:
-    # Battery chemistry specifications remain unchanged
-    BATTERY_SPECS = {
-        "Li-ion_11.1V": {"nominal_voltage": 11.1, "max_voltage": 12.6, "min_voltage": 8.25, "max_temp": 45, "min_temp": 0},
-        "Li-ion_14.8V": {"nominal_voltage": 14.8, "max_voltage": 16.8, "min_voltage": 10.0, "max_temp": 45, "min_temp": 0},
-        "Li-ion_24V": {"nominal_voltage": 24.0, "max_voltage": 29.4, "min_voltage": 19.2, "max_temp": 45, "min_temp": 0},
-        "Li-ion_36V": {"nominal_voltage": 36.0, "max_voltage": 42.0, "min_voltage": 27.5, "max_temp": 45, "min_temp": 0},
-        "Li-ion_48V": {"nominal_voltage": 48.0, "max_voltage": 54.6, "min_voltage": 35.7, "max_temp": 45, "min_temp": 0},
-        "Li-ion_51.8V": {"nominal_voltage": 51.8, "max_voltage": 58.8, "min_voltage": 38.5, "max_temp": 45, "min_temp": 0},
-        "Li-ion_59.2V": {"nominal_voltage": 59.2, "max_voltage": 67.2, "min_voltage": 44.0, "max_temp": 45, "min_temp": 0},
-        "Li-ion_62.9V": {"nominal_voltage": 62.9, "max_voltage": 71.4, "min_voltage": 46.7, "max_temp": 45, "min_temp": 0},
-        "Li-ion_72V": {"nominal_voltage": 72.0, "max_voltage": 84.0, "min_voltage": 55.0, "max_temp": 45, "min_temp": 0},
-        "LiFePO4_12.8V": {"nominal_voltage": 12.8, "max_voltage": 14.6, "min_voltage": 10.0, "max_temp": 55, "min_temp": -20},
-        "LiFePO4_24V": {"nominal_voltage": 24.0, "max_voltage": 29.2, "min_voltage": 20.0, "max_temp": 55, "min_temp": -20},
-        "LiFePO4_36V": {"nominal_voltage": 36.0, "max_voltage": 43.8, "min_voltage": 30.0, "max_temp": 55, "min_temp": -20},
-        "LiFePO4_48V": {"nominal_voltage": 48.0, "max_voltage": 54.6, "min_voltage": 37.5, "max_temp": 55, "min_temp": -20},
-        "LiFePO4_51.2V": {"nominal_voltage": 51.2, "max_voltage": 58.4, "min_voltage": 40.0, "max_temp": 55, "min_temp": -20},
-        "LiFePO4_60V": {"nominal_voltage": 60.0, "max_voltage": 69.3, "min_voltage": 47.5, "max_temp": 55, "min_temp": -20},
-        "LiFePO4_64V": {"nominal_voltage": 64.0, "max_voltage": 73.0, "min_voltage": 50.0, "max_temp": 55, "min_temp": -20},
-        "LiFePO4_72V": {"nominal_voltage": 72.0, "max_voltage": 87.6, "min_voltage": 60.0, "max_temp": 55, "min_temp": -20},
-        "LiFePO4_102.4V": {"nominal_voltage": 102.4, "max_voltage": 116.8, "min_voltage": 80.0, "max_temp": 55, "min_temp": -20},
-        "LiFePO4_121.6V": {"nominal_voltage": 121.6, "max_voltage": 121.6, "min_voltage": 95.0, "max_temp": 55, "min_temp": -20},
-        "LiFePO4_128V": {"nominal_voltage": 128.0, "max_voltage": 128.0, "min_voltage": 100.0, "max_temp": 55, "min_temp": -20}
+    # Battery chemistry specifications
+    BATTERY_TYPES = {
+        "Li-ion": {
+            "max_temp": 45, 
+            "min_temp": 0,
+            "max_voltage_factor": 1.135,  # Max voltage is ~113.5% of nominal for Li-ion
+            "min_voltage_factor": 0.75    # Min voltage is ~75% of nominal for Li-ion
+        },
+        "LFP": {
+            "max_temp": 55, 
+            "min_temp": -20,
+            "max_voltage_factor": 1.15,   # Max voltage is ~115% of nominal for LFP
+            "min_voltage_factor": 0.8     # Min voltage is ~80% of nominal for LFP
+        },
+        "Lead-acid": {
+            "max_temp": 40, 
+            "min_temp": -15,
+            "max_voltage_factor": 1.20,   # Max voltage is ~120% of nominal for Lead-acid
+            "min_voltage_factor": 0.7     # Min voltage is ~70% of nominal for Lead-acid
+        }
     }
+    
+    @staticmethod
+    def get_battery_specs(battery_type: str, nominal_voltage: float):
+        """Generate battery specifications based on type and nominal voltage"""
+        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
+            raise ValueError(f"Unknown battery type: {battery_type}")
+        
+        specs = BatteryDiagnostics.BATTERY_TYPES[battery_type].copy()
+        specs["nominal_voltage"] = nominal_voltage
+        specs["max_voltage"] = nominal_voltage * specs["max_voltage_factor"]
+        specs["min_voltage"] = nominal_voltage * specs["min_voltage_factor"]
+        
+        return specs
 
     @staticmethod
     def _validate_temperature(temperature: float, battery_type: str) -> float:
@@ -51,12 +62,12 @@ class BatteryDiagnostics:
             return 0.9  # Hot impact
 
     @staticmethod
-    def calculate_soc(voltage: float, battery_type: str, temperature: float) -> Dict:
+    def calculate_soc(voltage: float, battery_type: str, temperature: float, nominal_voltage: float) -> Dict:
         """Calculate State of Charge using voltage-based estimation with enhanced temperature compensation"""
-        if battery_type not in BatteryDiagnostics.BATTERY_SPECS:
+        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
             raise ValueError(f"Unknown battery type: {battery_type}")
 
-        specs = BatteryDiagnostics.BATTERY_SPECS[battery_type]
+        specs = BatteryDiagnostics.get_battery_specs(battery_type, nominal_voltage)
 
         # Validate voltage
         if voltage > specs["max_voltage"]:

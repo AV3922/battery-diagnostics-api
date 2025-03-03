@@ -117,6 +117,25 @@ async def health_check():
             }
         )
 
+@app.post("/battery/diagnose/soc")
+async def diagnose_soc(request: SOCRequest):
+    """Calculate State of Charge based on voltage"""
+    try:
+        logger.info(f"SOC diagnosis for {request.batteryType} battery with nominal voltage {request.nominalVoltage}V")
+        result = BatteryDiagnostics.calculate_soc(
+            voltage=request.voltage,
+            battery_type=request.batteryType,
+            temperature=request.temperature,
+            nominal_voltage=request.nominalVoltage
+        )
+        return JSONResponse(result)
+    except ValueError as e:
+        logger.error(f"SOC calculation error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error in SOC diagnosis: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 if __name__ == "__main__":
     import uvicorn
     try:
