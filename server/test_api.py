@@ -24,8 +24,8 @@ def test_soc_endpoint():
     # Test valid request
     valid_data = {
         "batteryType": "Li-ion",
-        "voltage": 3.7,
-        "temperature": 25
+        "voltage": 11.1,
+        "temperature": 27.0
     }
     response = client.post("/battery/diagnose/soc", 
                          json=valid_data,
@@ -37,7 +37,7 @@ def test_soc_endpoint():
     invalid_data = {
         "batteryType": "Invalid",
         "voltage": 3.7,
-        "temperature": 25
+        "temperature": 25.0
     }
     response = client.post("/battery/diagnose/soc", 
                          json=invalid_data,
@@ -82,7 +82,7 @@ def test_resistance_endpoint():
         "batteryType": "Li-ion",
         "voltage": 3.7,
         "current": 1.0,
-        "temperature": 25
+        "temperature": 25.0
     }
     response = client.post("/battery/diagnose/resistance", 
                          json=valid_data,
@@ -104,8 +104,8 @@ def test_diagnostic_history():
     # First make a diagnostic request
     soc_data = {
         "batteryType": "Li-ion",
-        "voltage": 3.7,
-        "temperature": 25
+        "voltage": 11.1,
+        "temperature": 27.0
     }
     client.post("/battery/diagnose/soc", json=soc_data, headers=headers)
 
