@@ -120,8 +120,8 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
     try:
-        # ALWAYS serve the app on port 5001 for consistency
-        port = 5001
+        # ALWAYS serve the app on port 5000
+        port = 5000
         logger.info(f"Starting FastAPI server on port {port}")
         uvicorn.run(app, host="0.0.0.0", port=port, reload=True)
     except Exception as e:

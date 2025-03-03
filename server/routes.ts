@@ -73,7 +73,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/health", async (req, res) => {
     try {
       console.log("Proxying health check to FastAPI...");
-      const response = await fetch('http://0.0.0.0:5001/health', {
+      const response = await fetch('http://0.0.0.0:5000/health', {
         headers: {
           'Accept': 'application/json'
         }
