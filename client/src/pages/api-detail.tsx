@@ -43,7 +43,18 @@ const API_DETAILS = {
       { code: "E001", description: "Invalid battery type" },
       { code: "E002", description: "Voltage out of range" },
       { code: "E003", description: "Invalid cell count" }
-    ]
+    ],
+    requestExample: {
+        "batteryType": "Li-ion",
+        "voltage": 3.7,
+        "cellCount": 4
+    },
+    responseExample: {
+        "nominalVoltage": 3.7,
+        "maxVoltage": 4.2,
+        "minVoltage": 3.2,
+        "status": "Normal"
+    }
   },
   "soc": {
     name: "State of Charge API",
@@ -80,7 +91,17 @@ const API_DETAILS = {
       { code: "E001", description: "Invalid battery type" },
       { code: "E002", description: "Voltage out of range" },
       { code: "E003", description: "Temperature out of range" }
-    ]
+    ],
+        requestExample: {
+            "batteryType": "Li-ion",
+            "voltage": 3.7,
+            "temperature": 25
+        },
+        responseExample: {
+            "stateOfCharge": 85,
+            "estimatedRange": 150,
+            "chargingStatus": "Discharging"
+        }
   },
   "soh": {
     name: "State of Health API",
@@ -120,7 +141,19 @@ const API_DETAILS = {
       { code: "E001", description: "Invalid battery type" },
       { code: "E002", description: "Invalid capacity values" },
       { code: "E003", description: "Cycle count out of range" }
-    ]
+    ],
+        requestExample: {
+            "batteryType": "Li-ion",
+            "currentCapacity": 2800,
+            "ratedCapacity": 3000,
+            "cycleCount": 250
+        },
+        responseExample: {
+            "stateOfHealth": 93,
+            "capacityLoss": 7,
+            "healthStatus": "Good",
+            "recommendedAction": "None"
+        }
   },
   "resistance": {
     name: "Internal Resistance API",
@@ -159,7 +192,18 @@ const API_DETAILS = {
       { code: "E001", description: "Invalid battery type" },
       { code: "E002", description: "Invalid measurement values" },
       { code: "E003", description: "Temperature out of range" }
-    ]
+    ],
+        requestExample: {
+            "batteryType": "Li-ion",
+            "voltage": 3.7,
+            "current": 1.0,
+            "temperature": 25
+        },
+        responseExample: {
+            "internalResistance": 15,
+            "resistanceStatus": "Normal",
+            "powerLoss": 0.05
+        }
   },
   "capacity-fade": {
     name: "Capacity Fade Analysis API",
@@ -201,7 +245,20 @@ const API_DETAILS = {
       { code: "E001", description: "Invalid battery type" },
       { code: "E002", description: "Invalid capacity values" },
       { code: "E003", description: "Invalid service time" }
-    ]
+    ],
+        requestExample: {
+            "batteryType": "Li-ion",
+            "initialCapacity": 3000,
+            "currentCapacity": 2700,
+            "cycleCount": 300,
+            "timeInService": 365
+        },
+        responseExample: {
+            "capacityFade": 10,
+            "fadeRate": 0.03,
+            "projectedLifetime": 1000,
+            "recommendedAction": "Monitor closely"
+        }
   },
   "cell-balance": {
     name: "Cell Imbalance Detection API",
@@ -238,7 +295,17 @@ const API_DETAILS = {
       { code: "E001", description: "Invalid battery type" },
       { code: "E002", description: "Invalid cell voltage readings" },
       { code: "E003", description: "Temperature out of range" }
-    ]
+    ],
+        requestExample: {
+            "batteryType": "Li-ion",
+            "cellVoltages": [3.9, 3.85, 3.92, 3.88],
+            "temperature": 25
+        },
+        responseExample: {
+            "maxImbalance": 0.07,
+            "balanceStatus": "Good",
+            "problematicCells": []
+        }
   },
   "cycle-life": {
     name: "Cycle Life Estimation API",
@@ -279,7 +346,19 @@ const API_DETAILS = {
       { code: "E001", description: "Invalid battery type" },
       { code: "E002", description: "Invalid cycle parameters" },
       { code: "E003", description: "Temperature out of range" }
-    ]
+    ],
+        requestExample: {
+            "batteryType": "Li-ion",
+            "cycleCount": 500,
+            "depthOfDischarge": 80,
+            "averageTemperature": 25,
+            "currentSOH": 90
+        },
+        responseExample: {
+            "remainingCycles": 1000,
+            "estimatedEOL": "2026-03-15",
+            "confidenceLevel": 95
+        }
   },
   "safety-monitor": {
     name: "Safety Monitoring API",
@@ -321,7 +400,20 @@ const API_DETAILS = {
       { code: "E001", description: "Invalid battery type" },
       { code: "E002", description: "Parameters out of safe range" },
       { code: "E003", description: "Critical safety violation" }
-    ]
+    ],
+        requestExample: {
+            "batteryType": "Li-ion",
+            "voltage": 3.7,
+            "current": 2.0,
+            "temperature": 35,
+            "pressure": 1.0
+        },
+        responseExample: {
+            "safetyStatus": "Safe",
+            "riskLevel": "Low",
+            "warningFlags": [],
+            "recommendedActions": []
+        }
   },
   "thermal-analysis": {
     name: "Thermal Analysis API",
@@ -363,7 +455,20 @@ const API_DETAILS = {
       { code: "E001", description: "Invalid battery type" },
       { code: "E002", description: "Temperature out of range" },
       { code: "E003", description: "Invalid load profile" }
-    ]
+    ],
+        requestExample: {
+            "batteryType": "Li-ion",
+            "temperature": 35,
+            "rateOfChange": 0.5,
+            "ambientTemperature": 25,
+            "loadProfile": "high"
+        },
+        responseExample: {
+            "thermalStatus": "Normal",
+            "runawayRisk": 2,
+            "coolingNeeded": "None",
+            "temperatureMargin": 15
+        }
   },
   "fault-detection": {
     name: "Fault Detection API",
@@ -405,7 +510,20 @@ const API_DETAILS = {
       { code: "E001", description: "Invalid battery type" },
       { code: "E002", description: "Invalid measurement values" },
       { code: "E003", description: "Critical fault detected" }
-    ]
+    ],
+        requestExample: {
+            "batteryType": "Li-ion",
+            "voltage": 3.7,
+            "current": -0.1,
+            "temperature": 40,
+            "impedance": 150
+        },
+        responseExample: {
+            "faultStatus": "Reverse Current",
+            "faultType": "Electrical",
+            "severity": "High",
+            "recommendedActions": ["Inspect wiring", "Check for shorts"]
+        }
   }
 };
 
@@ -466,6 +584,34 @@ export default function ApiDetail() {
                 <div className="relative">
                   <pre className="bg-muted p-4 rounded-lg overflow-x-auto font-mono text-sm">
                     {apiInfo.curl}
+                  </pre>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+                  >
+                    Copy
+                  </Button>
+                </div>
+              </TabsContent>
+              <TabsContent value="request">
+                <div className="relative">
+                  <pre className="bg-muted p-4 rounded-lg overflow-x-auto font-mono text-sm">
+                    {JSON.stringify(apiInfo.requestExample, null, 2)}
+                  </pre>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+                  >
+                    Copy
+                  </Button>
+                </div>
+              </TabsContent>
+              <TabsContent value="response">
+                <div className="relative">
+                  <pre className="bg-muted p-4 rounded-lg overflow-x-auto font-mono text-sm">
+                    {JSON.stringify(apiInfo.responseExample, null, 2)}
                   </pre>
                   <Button
                     variant="ghost"
