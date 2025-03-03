@@ -25,7 +25,8 @@ def test_soc_endpoint():
     valid_data = {
         "batteryType": "Li-ion",
         "voltage": 11.1,
-        "temperature": 27.0
+        "temperature": 27.0,
+        "nominalVoltage": 12.0
     }
     response = client.post("/battery/diagnose/soc", 
                          json=valid_data,
@@ -37,7 +38,8 @@ def test_soc_endpoint():
     invalid_data = {
         "batteryType": "Invalid",
         "voltage": 3.7,
-        "temperature": 25.0
+        "temperature": 25.0,
+        "nominalVoltage": 3.6
     }
     response = client.post("/battery/diagnose/soc", 
                          json=invalid_data,
