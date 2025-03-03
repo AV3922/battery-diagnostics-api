@@ -8,25 +8,37 @@ client = TestClient(app)
 
 def test_health_endpoints():
     """Test base endpoints"""
+    print("\n===========================================================")
+    print("TEST: Health Endpoints")
+    print("===========================================================")
+    
     # Test root endpoint
-    response = client.get("/")
     print("\n=== ROOT ENDPOINT ===")
+    response = client.get("/")
+    print(f"Request: GET /")
     print(f"Status Code: {response.status_code}")
     print(f"Response: {json.dumps(response.json(), indent=2)}")
     assert response.status_code == 200
     assert "status" in response.json()
     assert response.json()["status"] == "online"
+    print("RESULT: PASSED ✓")
 
     # Test health endpoint
-    response = client.get("/health")
     print("\n=== HEALTH ENDPOINT ===")
+    print(f"Request: GET /health")
+    response = client.get("/health")
     print(f"Status Code: {response.status_code}")
     print(f"Response: {json.dumps(response.json(), indent=2)}")
     assert response.status_code == 200
     assert response.json()["status"] == "healthy"
+    print("RESULT: PASSED ✓")
 
 def test_soc_endpoint():
     """Test State of Charge endpoint"""
+    print("\n===========================================================")
+    print("TEST: State of Charge (SOC) Endpoint")
+    print("===========================================================")
+    
     headers = {"x-api-key": "test_key"}
 
     # Test valid request
@@ -37,7 +49,10 @@ def test_soc_endpoint():
         "nominalVoltage": 12.0
     }
     print("\n=== SOC ENDPOINT (VALID) ===")
-    print(f"Request: {json.dumps(valid_data, indent=2)}")
+    print(f"Request: POST /battery/diagnose/soc")
+    print(f"Headers: {json.dumps(headers, indent=2)}")
+    print(f"Request Body: {json.dumps(valid_data, indent=2)}")
+    
     response = client.post("/battery/diagnose/soc", 
                          json=valid_data,
                          headers=headers)
@@ -45,6 +60,7 @@ def test_soc_endpoint():
     print(f"Response: {json.dumps(response.json(), indent=2)}")
     assert response.status_code == 200
     assert "stateOfCharge" in response.json()
+    print("RESULT: PASSED ✓")
 
     # Test invalid battery type
     invalid_data = {
@@ -53,17 +69,25 @@ def test_soc_endpoint():
         "temperature": 25.0,
         "nominalVoltage": 3.6
     }
-    print("\n=== SOC ENDPOINT (INVALID) ===")
-    print(f"Request: {json.dumps(invalid_data, indent=2)}")
+    print("\n=== SOC ENDPOINT (INVALID BATTERY TYPE) ===")
+    print(f"Request: POST /battery/diagnose/soc")
+    print(f"Headers: {json.dumps(headers, indent=2)}")
+    print(f"Request Body: {json.dumps(invalid_data, indent=2)}")
+    
     response = client.post("/battery/diagnose/soc", 
                          json=invalid_data,
                          headers=headers)
     print(f"Status Code: {response.status_code}")
-    print(f"Response: {json.dumps(response.text, indent=2)}")
+    print(f"Response: {response.text}")
     assert response.status_code == 422
+    print("RESULT: PASSED ✓")
 
 def test_soh_endpoint():
     """Test State of Health endpoint"""
+    print("\n===========================================================")
+    print("TEST: State of Health (SOH) Endpoint")
+    print("===========================================================")
+    
     headers = {"x-api-key": "test_key"}
 
     # Test valid request
@@ -74,7 +98,10 @@ def test_soh_endpoint():
         "cycleCount": 250
     }
     print("\n=== SOH ENDPOINT (VALID) ===")
-    print(f"Request: {json.dumps(valid_data, indent=2)}")
+    print(f"Request: POST /battery/diagnose/soh")
+    print(f"Headers: {json.dumps(headers, indent=2)}")
+    print(f"Request Body: {json.dumps(valid_data, indent=2)}")
+    
     response = client.post("/battery/diagnose/soh", 
                          json=valid_data,
                          headers=headers)
@@ -82,6 +109,7 @@ def test_soh_endpoint():
     print(f"Response: {json.dumps(response.json(), indent=2)}")
     assert response.status_code == 200
     assert "stateOfHealth" in response.json()
+    print("RESULT: PASSED ✓")
 
     # Test invalid capacity
     invalid_data = {
@@ -90,17 +118,25 @@ def test_soh_endpoint():
         "ratedCapacity": 3000,
         "cycleCount": 250
     }
-    print("\n=== SOH ENDPOINT (INVALID) ===")
-    print(f"Request: {json.dumps(invalid_data, indent=2)}")
+    print("\n=== SOH ENDPOINT (INVALID CAPACITY) ===")
+    print(f"Request: POST /battery/diagnose/soh")
+    print(f"Headers: {json.dumps(headers, indent=2)}")
+    print(f"Request Body: {json.dumps(invalid_data, indent=2)}")
+    
     response = client.post("/battery/diagnose/soh", 
                          json=invalid_data,
                          headers=headers)
     print(f"Status Code: {response.status_code}")
-    print(f"Response: {json.dumps(response.text, indent=2)}")
+    print(f"Response: {response.text}")
     assert response.status_code == 422
+    print("RESULT: PASSED ✓")
 
 def test_resistance_endpoint():
     """Test Internal Resistance endpoint"""
+    print("\n===========================================================")
+    print("TEST: Internal Resistance Endpoint")
+    print("===========================================================")
+    
     headers = {"x-api-key": "test_key"}
 
     # Test valid request
@@ -111,7 +147,10 @@ def test_resistance_endpoint():
         "temperature": 25.0
     }
     print("\n=== RESISTANCE ENDPOINT (VALID) ===")
-    print(f"Request: {json.dumps(valid_data, indent=2)}")
+    print(f"Request: POST /battery/diagnose/resistance")
+    print(f"Headers: {json.dumps(headers, indent=2)}")
+    print(f"Request Body: {json.dumps(valid_data, indent=2)}")
+    
     response = client.post("/battery/diagnose/resistance", 
                          json=valid_data,
                          headers=headers)
@@ -119,9 +158,14 @@ def test_resistance_endpoint():
     print(f"Response: {json.dumps(response.json(), indent=2)}")
     assert response.status_code == 200
     assert "internalResistance" in response.json()
+    print("RESULT: PASSED ✓")
 
 def test_api_key_validation():
     """Test API key validation"""
+    print("\n===========================================================")
+    print("TEST: API Key Validation")
+    print("===========================================================")
+    
     # Test missing API key
     request_data = {
         "batteryType": "Li-ion", 
@@ -130,14 +174,22 @@ def test_api_key_validation():
         "nominalVoltage": 3.7
     }
     print("\n=== API KEY VALIDATION (MISSING) ===")
-    print(f"Request: {json.dumps(request_data, indent=2)}")
+    print(f"Request: POST /battery/diagnose/soc")
+    print(f"Headers: No API Key")
+    print(f"Request Body: {json.dumps(request_data, indent=2)}")
+    
     response = client.post("/battery/diagnose/soc", json=request_data)
     print(f"Status Code: {response.status_code}")
-    print(f"Response: {json.dumps(response.text, indent=2)}")
+    print(f"Response: {response.text}")
     assert response.status_code == 422  # FastAPI validation error for missing header
+    print("RESULT: PASSED ✓")
 
 def test_diagnostic_history():
     """Test diagnostic history endpoint"""
+    print("\n===========================================================")
+    print("TEST: Diagnostic History Endpoint")
+    print("===========================================================")
+    
     headers = {"x-api-key": "test_key"}
 
     # First make a diagnostic request
@@ -148,16 +200,24 @@ def test_diagnostic_history():
         "nominalVoltage": 12.0
     }
     print("\n=== MAKING DIAGNOSTIC REQUEST ===")
+    print(f"Request: POST /battery/diagnose/soc")
+    print(f"Headers: {json.dumps(headers, indent=2)}")
+    print(f"Request Body: {json.dumps(soc_data, indent=2)}")
+    
     client.post("/battery/diagnose/soc", json=soc_data, headers=headers)
-
+    
     # Then check history
     print("\n=== DIAGNOSTIC HISTORY ===")
+    print(f"Request: GET /battery/logs")
+    print(f"Headers: {json.dumps(headers, indent=2)}")
+    
     response = client.get("/battery/logs", headers=headers)
     print(f"Status Code: {response.status_code}")
     print(f"Response: {json.dumps(response.json(), indent=2)}")
     assert response.status_code == 200
     assert "logs" in response.json()
     assert len(response.json()["logs"]) > 0
+    print("RESULT: PASSED ✓")
 
 if __name__ == "__main__":
     print("\n===== RUNNING API TESTS =====")
