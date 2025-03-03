@@ -9,11 +9,30 @@ class BatteryParameters(BaseModel):
     temperature: float = Field(..., description="Battery temperature in Celsius")
     capacity: Optional[float] = Field(None, description="Battery capacity in mAh")
     cycleCount: Optional[int] = Field(None, description="Number of charge cycles")
+    nominalVoltage: Optional[float] = Field(None, description="Nominal voltage of the battery in volts")
 
     @model_validator(mode='after')
     def validate_parameters(self) -> 'BatteryParameters':
         valid_types = ["Li-ion", "LiFePO₄", "Lead-acid"]
         if self.batteryType not in valid_types:
+
+class SOCRequest(BaseModel):
+    batteryType: str = Field(..., description="Battery chemistry type (Li-ion, LiFePO₄, Lead-acid)")
+    voltage: float = Field(..., description="Current battery voltage (V)")
+    temperature: float = Field(..., description="Battery temperature (°C)")
+    nominalVoltage: Optional[float] = Field(None, description="Nominal voltage of the battery (V)")
+
+class SOHRequest(BaseModel):
+    currentCapacity: float = Field(..., description="Current measured capacity (mAh)")
+    ratedCapacity: float = Field(..., description="Original rated capacity (mAh)")
+    cycleCount: int = Field(..., description="Number of charge cycles completed")
+
+class ResistanceRequest(BaseModel):
+    voltage: float = Field(..., description="Battery voltage (V)")
+    current: float = Field(..., description="Current flow (A)")
+    temperature: float = Field(..., description="Battery temperature (°C)")
+    batteryType: str = Field(..., description="Battery chemistry type")
+
             raise ValueError(f"Battery type must be one of {valid_types}")
 
         if self.voltage <= 0 or self.voltage > 100:
