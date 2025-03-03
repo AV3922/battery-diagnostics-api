@@ -10,7 +10,7 @@ class BatteryDiagnostics:
             "max_temp": 45, 
             "min_temp": 0,
             "voltage_specs": {
-               "Nominal_Voltage": 11.1: {"max_voltage": 12.6, "min_voltage": 8.25},
+                11.1: {"max_voltage": 12.6, "min_voltage": 8.25},
                 14.8: {"max_voltage": 16.8, "min_voltage": 10.0},
                 24.0: {"max_voltage": 29.4, "min_voltage": 19.2},
                 36.0: {"max_voltage": 42.0, "min_voltage": 27.5},
@@ -19,13 +19,16 @@ class BatteryDiagnostics:
                 59.2: {"max_voltage": 67.2, "min_voltage": 44.0},
                 62.9: {"max_voltage": 71.4, "min_voltage": 46.7},
                 72.0: {"max_voltage": 84.0, "min_voltage": 55.0}
-            }
+            },
+            "max_voltage_factor": 1.135,  # Max voltage is ~113.5% of nominal for Li-ion
+            "min_voltage_factor": 0.75    # Min voltage is ~75% of nominal for Li-ion
         },
         
         "LFP": {
             "max_temp": 55, 
             "min_temp": -20,
             "voltage_specs": {
+                11.1: {"max_voltage": 12.8, "min_voltage": 8.9},
                 12.8: {"max_voltage": 14.6, "min_voltage": 10.0},
                 24.0: {"max_voltage": 29.2, "min_voltage": 20.0},
                 36.0: {"max_voltage": 43.8, "min_voltage": 30.0},
@@ -37,22 +40,26 @@ class BatteryDiagnostics:
                 102.4: {"max_voltage": 116.8, "min_voltage": 80.0},
                 121.6: {"max_voltage": 121.6, "min_voltage": 95.0},
                 128.0: {"max_voltage": 128.0, "min_voltage": 100.0}
-            }
+            },
+            "max_voltage_factor": 1.15,   # Max voltage is ~115% of nominal for LFP
+            "min_voltage_factor": 0.8     # Min voltage is ~80% of nominal for LFP
         },
         
         "Lead-acid": {
             "max_temp": 40, 
             "min_temp": -15,
             "voltage_specs": {
+                11.1: {"max_voltage": 13.3, "min_voltage": 7.8},
                 6.0: {"max_voltage": 7.2, "min_voltage": 4.2},
                 12.0: {"max_voltage": 14.4, "min_voltage": 8.4},
                 24.0: {"max_voltage": 28.8, "min_voltage": 16.8},
                 36.0: {"max_voltage": 43.2, "min_voltage": 25.2},
                 48.0: {"max_voltage": 57.6, "min_voltage": 33.6},
                 72.0: {"max_voltage": 86.4, "min_voltage": 50.4}
-            }
+            },
+            "max_voltage_factor": 1.20,   # Max voltage is ~120% of nominal for Lead-acid
+            "min_voltage_factor": 0.7     # Min voltage is ~70% of nominal for Lead-acid
         }
-            
     }
     
     @staticmethod
