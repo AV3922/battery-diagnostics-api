@@ -56,7 +56,7 @@ class BatteryDiagnostics:
     }
     
     @staticmethod
-    def get_battery_specs(battery_type: str, nominal_voltage: float = None):
+    def get_battery_specs(battery_type: str, nominal_voltage: float):
         """Generate battery specifications based on type and nominal voltage"""
         if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
             raise ValueError(f"Unknown battery type: {battery_type}")
