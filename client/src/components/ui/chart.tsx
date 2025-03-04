@@ -6,6 +6,24 @@ import { cn } from "@/lib/utils"
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const
 
+// Add gradient definitions for charts
+const CHART_GRADIENTS = {
+  blue: {
+    id: "chart-blue-gradient",
+    colors: [
+      { offset: "0%", color: "hsl(213, 94%, 68%)" },
+      { offset: "100%", color: "hsl(215, 90%, 50%)" },
+    ],
+  },
+  lightBlue: {
+    id: "chart-light-blue-gradient",
+    colors: [
+      { offset: "0%", color: "hsl(210, 100%, 80%)" },
+      { offset: "100%", color: "hsl(220, 100%, 65%)" },
+    ],
+  },
+}
+
 export type ChartConfig = {
   [k in string]: {
     label?: React.ReactNode

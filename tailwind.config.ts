@@ -51,6 +51,12 @@ export default {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        gradient: {
+          "blue-primary": "linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)",
+          "blue-light": "linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)",
+          "blue-dark": "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
+          "blue-vibrant": "linear-gradient(90deg, #2563eb 0%, #4f46e5 100%)",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

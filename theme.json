@@ -1,3 +1,4 @@
+
 {
   "variant": "professional",
   "primary": "hsl(215 90% 50%)",
@@ -10,6 +11,11 @@
   "gradients": {
     "primary": "linear-gradient(135deg, hsl(213 94% 68%) 0%, hsl(215 90% 50%) 100%)",
     "primary-hover": "linear-gradient(135deg, hsl(213 94% 73%) 0%, hsl(215 90% 55%) 100%)",
-    "primary-active": "linear-gradient(135deg, hsl(213 94% 63%) 0%, hsl(215 90% 45%) 100%)"
+    "primary-active": "linear-gradient(135deg, hsl(213 94% 63%) 0%, hsl(215 90% 45%) 100%)",
+    "blue-soft": "linear-gradient(135deg, hsl(213 90% 75%) 0%, hsl(220 85% 60%) 100%)",
+    "blue-vibrant": "linear-gradient(90deg, hsl(210 100% 60%) 0%, hsl(240 100% 70%) 100%)",
+    "blue-accent": "linear-gradient(45deg, hsl(215 90% 50%) 0%, hsl(200 100% 60%) 100%)",
+    "blue-dark": "linear-gradient(to right, hsl(220 70% 40%) 0%, hsl(230 80% 30%) 100%)",
+    "blue-light": "linear-gradient(to bottom right, hsl(210 100% 80%) 0%, hsl(220 100% 65%) 100%)"
   }
 }

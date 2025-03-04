@@ -21,7 +21,7 @@ export default function Navbar() {
               APIs
             </a>
           </Link>
-          <Link href="/docs">
+          <Link href="/dashboard">
             <a className="text-muted-foreground hover:text-foreground transition">
               Dashboard
             </a>
