@@ -19,13 +19,6 @@ export default function HeroSection() {
             <Link href="/dashboard">
               <Button variant="outline" size="lg">View Live Dashboard</Button>
             </Link>
-            {/* Added Get API Key button here */}
-            <Link href="/get-api-key"> {/* Assuming a route for getting the API key */}
-              <Button size="lg" className="gap-2 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 transition-all duration-200">
-                <span className="h-4 w-4">{/* Placeholder for Key component */}</span>
-                Get API Key
-              </Button>
-            </Link>
           </div>
         </div>
       </div>
