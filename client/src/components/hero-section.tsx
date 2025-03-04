@@ -14,7 +14,7 @@ export default function HeroSection() {
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/api-list">
-              <Button size="lg">Get Started</Button>
+              <Button size="lg" className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 transition-all duration-200">Get API Key</Button>
             </Link>
             <Link href="/dashboard">
               <Button variant="outline" size="lg">View Live Dashboard</Button>
