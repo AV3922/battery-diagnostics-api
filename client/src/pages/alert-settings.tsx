@@ -90,17 +90,17 @@ export default function AlertSettings() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-4xl font-bold">Alert Settings</h1>
+          <h1 className="text-4xl font-bold gradient-text">Alert Settings</h1>
           <p className="text-muted-foreground mt-2">Configure battery performance thresholds</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Alert Configuration */}
-        <Card>
+        <Card className="backdrop-blur border-2 gradient-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BellRing className="h-5 w-5" />
+              <BellRing className="h-5 w-5 gradient-text" />
               Configure New Alert
             </CardTitle>
             <CardDescription>Set thresholds for battery parameters</CardDescription>
@@ -172,17 +172,17 @@ export default function AlertSettings() {
               </Select>
             </div>
 
-            <Button className="w-full" onClick={handleSaveThreshold}>
+            <Button className="w-full primary-button" onClick={handleSaveThreshold}>
               Save Alert Threshold
             </Button>
           </CardContent>
         </Card>
 
         {/* Active Alerts */}
-        <Card>
+        <Card className="backdrop-blur border-2 gradient-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5" />
+              <AlertTriangle className="h-5 w-5 gradient-text" />
               Active Alerts
             </CardTitle>
             <CardDescription>Currently triggered alerts</CardDescription>
@@ -192,7 +192,7 @@ export default function AlertSettings() {
               {alertHistory?.slice(0, 5).map((alert: any) => (
                 <div
                   key={alert.id}
-                  className="flex items-center justify-between p-4 rounded-lg bg-muted"
+                  className="flex items-center justify-between p-4 rounded-lg bg-muted/50 backdrop-blur"
                 >
                   <div className="flex items-center gap-3">
                     {alert.severity === 'critical' ? (
@@ -201,14 +201,14 @@ export default function AlertSettings() {
                       <BellRing className="h-5 w-5 text-warning" />
                     )}
                     <div>
-                      <p className="font-medium">{alert.parameterName}</p>
+                      <p className="font-medium gradient-text">{alert.parameterName}</p>
                       <p className="text-sm text-muted-foreground">
                         Value: {alert.value} | {new Date(alert.timestamp).toLocaleString()}
                       </p>
                     </div>
                   </div>
                   {!alert.acknowledged && (
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="gradient-hover">
                       Acknowledge
                     </Button>
                   )}
@@ -219,10 +219,10 @@ export default function AlertSettings() {
         </Card>
 
         {/* Threshold List */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 backdrop-blur border-2 gradient-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5" />
+              <Activity className="h-5 w-5 gradient-text" />
               Configured Thresholds
             </CardTitle>
             <CardDescription>List of all configured alert thresholds</CardDescription>
@@ -232,41 +232,26 @@ export default function AlertSettings() {
               {thresholds?.map((threshold: any) => (
                 <div
                   key={threshold.id}
-                  className="flex items-center justify-between p-4 rounded-lg bg-muted"
+                  className="flex items-center justify-between p-4 rounded-lg bg-muted/50 backdrop-blur"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-full bg-primary/10">
-                      {threshold.parameterName === 'voltage' && <Battery className="h-5 w-5 text-primary" />}
-                      {threshold.parameterName === 'temperature' && <Thermometer className="h-5 w-5 text-primary" />}
-                      {threshold.parameterName === 'stateOfCharge' && <Zap className="h-5 w-5 text-primary" />}
+                    <div className="p-2 rounded-full gradient-primary">
+                      {threshold.parameterName === 'voltage' && <Battery className="h-5 w-5 text-white" />}
+                      {threshold.parameterName === 'temperature' && <Thermometer className="h-5 w-5 text-white" />}
+                      {threshold.parameterName === 'stateOfCharge' && <Zap className="h-5 w-5 text-white" />}
                     </div>
                     <div>
-                      <p className="font-medium">{threshold.parameterName}</p>
+                      <p className="font-medium gradient-text">{threshold.parameterName}</p>
                       <p className="text-sm text-muted-foreground">
                         Range: {threshold.minValue} - {threshold.maxValue}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm">Edit</Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Edit Threshold</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Make changes to this alert threshold.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        {/* Add edit form here */}
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction>Save Changes</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="outline" size="sm" className="gradient-hover">
+                      Edit
+                    </Button>
+                    <Button variant="ghost" size="sm" className="hover:text-destructive">
                       <X className="h-4 w-4" />
                     </Button>
                   </div>

@@ -384,7 +384,7 @@ class BatteryDiagnostics:
         # Determine balance status
         if voltage_diff < 0.05:
             status = "Well Balanced"
-        elif voltage_diff < 0.1:
+        elif voltage_diff < 0.2:
             status = "Acceptable"
         else:
             status = "Imbalanced"

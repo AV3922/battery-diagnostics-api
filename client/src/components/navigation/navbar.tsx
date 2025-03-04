@@ -17,13 +17,19 @@ export default function Navbar() {
 
         <div className="flex items-center gap-6">
           <Link href="/api-list">
-            <a className="text-muted-foreground hover:text-foreground transition">APIs</a>
+            <a className="text-muted-foreground hover:text-foreground transition">
+              APIs
+            </a>
           </Link>
           <Link href="/docs">
-            <a className="text-muted-foreground hover:text-foreground transition">Documentation</a>
+            <a className="text-muted-foreground hover:text-foreground transition">
+              Dashboard
+            </a>
           </Link>
           <div className="flex items-center gap-3">
-            <Button variant="outline" className="border-border/40">Sign In</Button>
+            <Button variant="outline" className="border-border/40">
+              Sign In
+            </Button>
             <Button className="bg-primary hover:bg-primary/90">
               <Shield className="h-4 w-4 mr-2" />
               Get API Key
