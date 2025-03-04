@@ -16,7 +16,9 @@ export default function HeroSection() {
             <Link href="/api-list">
               <Button size="lg">Get Started</Button>
             </Link>
-            <Button variant="outline" size="lg">View Documentation</Button>
+            <Link href="/dashboard">
+              <Button variant="outline" size="lg">View Live Dashboard</Button>
+            </Link>
           </div>
         </div>
       </div>
