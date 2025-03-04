@@ -22,10 +22,10 @@ app = FastAPI(
     title="Battery OS API",
     description="Advanced Battery Diagnostics and Analysis API",
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc"
+    docs_url="/docs",  # ✅ Ensure Swagger UI is enabled
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"  # ✅ Ensure OpenAPI JSON is available
 )
-
 # Enable CORS for Replit environment
 app.add_middleware(
     CORSMiddleware,
@@ -52,6 +52,23 @@ async def http_exception_handler(request, exc):
             "status_code": exc.status_code
         }
     )
+
+@app.get("/api-list")
+async def api_list():
+    """Returns a list of available API endpoints"""
+    return {
+        "endpoints": [
+            "/",
+            "/health",
+            "/docs",
+            "/api-list",
+            "/battery/diagnose/soc",
+            "/battery/diagnose/soh",
+            "/battery/diagnose/resistance",
+            "/battery/logs"
+        ]
+    }
+
 
 @app.exception_handler(404)
 async def not_found_exception_handler(request, exc):
@@ -123,8 +140,9 @@ async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(No
     """Calculate State of Charge based on voltage"""
     if not x_api_key:
         raise HTTPException(status_code=422, detail="API key is required")
+    
     try:
-        logger.info(f"SOC diagnosis for {request.batteryType} battery with nominal voltage {request.nominalVoltage}V")
+        logger.info(f"SOC diagnosis for {request.batteryType} battery")
         result = BatteryDiagnostics.calculate_soc(
             voltage=request.voltage,
             battery_type=request.batteryType,
@@ -132,8 +150,7 @@ async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(No
             current=request.current,
             nominal_voltage=request.nominalVoltage
         )
-
-        # Store diagnostic history for logs
+        
         test_db["diagnostic_history"].append({
             "timestamp": datetime.now().isoformat(),
             "type": "soc",
@@ -148,6 +165,7 @@ async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(No
     except Exception as e:
         logger.error(f"Unexpected error in SOC diagnosis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
 
 @app.get("/battery/logs")
 async def get_diagnostic_history(x_api_key: Optional[str] = Header(None)):
@@ -222,11 +240,16 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
         logger.error(f"Unexpected error in resistance diagnosis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@app.get("/favicon.ico")
+async def favicon():
+    return JSONResponse(status_code=204)  # No content response
+
+
 if __name__ == "__main__":
     import uvicorn
     import os
     try:
-        # Use Render's PORT dynamically
+        # Dynamically assign the correct port
         port = int(os.getenv("PORT", 8000))  
         logger.info(f"Starting FastAPI server on port {port}")
         uvicorn.run(app, host="0.0.0.0", port=port, reload=True)
