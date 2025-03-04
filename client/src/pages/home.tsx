@@ -5,7 +5,7 @@ import FeaturesGrid from "@/components/features-grid";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-black to-gray-900">
+    <div className="flex flex-col min-h-screen bg-gradient-matte-black">
       <HeroSection />
       
       <main className="container mx-auto px-4 py-12">
