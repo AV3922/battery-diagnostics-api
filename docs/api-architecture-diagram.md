@@ -6,7 +6,7 @@
 │                                CLIENT                                    │
 │                                                                          │
 │  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌──────────┐  │
-│  │  Home Page  │    │  API List   │    │ API Detail  │    │ Not Found│  │
+│  │  Home Page  │    │  API List   │    │ API Detail  │    │ Dashboard │  │
 │  └─────────────┘    └─────────────┘    └─────────────┘    └──────────┘  │
 │             │              │                  │                │         │
 └─────────────┼──────────────┼──────────────────┼────────────────┼─────────┘
@@ -21,8 +21,10 @@
 │  │                         │       │                               │    │
 │  │  - /api/users           │◄──────┤  - API Key Validation        │    │
 │  │  - /api/diagnostics     │       │                               │    │
-│  │  - /health (proxy)      │       └───────────────────────────────┘    │
-│  └────────────┬────────────┘                    ▲                       │
+│  │  - /api/v1/diagnostics  │       └───────────────────────────────┘    │
+│  │  - /api/v1/alert-*      │                    ▲                       │
+│  │  - /health (proxy)      │                    │                       │
+│  └────────────┬────────────┘                    │                       │
 │               │                                 │                        │
 └───────────────┼─────────────────────────────────┼────────────────────────┘
                 │                                 │
@@ -34,10 +36,14 @@
 │  - createUser                 │     │                                  │
 │  - createDiagnostic           │     │  ┌────────────┐ ┌─────────────┐ │
 │  - getDiagnostics             │     │  │   users    │ │  battery_   │ │
-│                               │     │  │            │ │ diagnostics │ │
-└───────────────────────────────┘     │  └────────────┘ └─────────────┘ │
-                                      └──────────────────────────────────┘
-                │
+│  - createAlertThreshold       │     │  │            │ │ diagnostics │ │
+│  - getAlertThresholds         │     │  └────────────┘ └─────────────┘ │
+│  - acknowledgeAlert           │     │                                  │
+│                               │     │  ┌────────────┐ ┌─────────────┐ │
+└───────────────────────────────┘     │  │   alert_   │ │   alert_    │ │
+                │                      │  │ thresholds │ │  history    │ │
+                │                      │  └────────────┘ └─────────────┘ │
+                │                      └──────────────────────────────────┘
                 ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                              FASTAPI SERVER                              │
@@ -94,11 +100,13 @@ The Battery OS API is structured as a multi-tier application:
 
 1. **Client Layer**
    - React-based web interface
-   - Pages: Home, API List, API Detail, Not Found
+   - Pages: Home, API List, API Detail, Dashboard
    - Uses Wouter for routing and Tanstack Query for data fetching
+   - Features matte black gradient styling for dark mode UI
 
 2. **Express Server (Node.js)**
    - Handles API routes for user management and diagnostics storage
+   - Manages alert thresholds and alert history
    - Proxies health check to FastAPI
    - Manages authentication via API keys
    - Communicates with the database
@@ -106,6 +114,7 @@ The Battery OS API is structured as a multi-tier application:
 3. **Storage Layer**
    - Interface between Express server and PostgreSQL database
    - User authentication and diagnostic data storage
+   - Alert threshold management and notification handling
    - Uses Drizzle ORM for database operations
 
 4. **FastAPI Server (Python)**
@@ -121,8 +130,8 @@ The Battery OS API is structured as a multi-tier application:
 
 6. **Database**
    - PostgreSQL database
-   - Tables: users, battery_diagnostics
-   - Stores user information and diagnostic results
+   - Tables: users, battery_diagnostics, alert_thresholds, alert_history
+   - Stores user information, diagnostic results, and alert configurations
 
 ## Communication Flow
 
@@ -131,6 +140,7 @@ The Battery OS API is structured as a multi-tier application:
 3. FastAPI processes battery diagnostic calculations
 4. Battery Diagnostics module performs the core analysis
 5. Results are returned to the client through the appropriate server
+6. Alerts are generated based on configured thresholds
 
 ## API Categories
 
@@ -138,3 +148,4 @@ The Battery OS API is structured as a multi-tier application:
 - **Thermal Analysis**: Temperature monitoring, thermal runaway risk
 - **Safety Monitoring**: Fault detection, safety status
 - **Lifetime Estimation**: Capacity fade, cycle life prediction
+- **Alert Management**: Threshold configuration, notification delivery
