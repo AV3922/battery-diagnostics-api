@@ -19,7 +19,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/api-list" component={ApiList} />
           <Route path="/api-detail/:endpoint" component={ApiDetail} />
-          <Route path="/documentation" component={Dashboard} />
+          <Route path="/docs" component={Dashboard} />
           <Route path="/dashboard" component={Dashboard} />
           <Route component={NotFound} />
         </Switch>
