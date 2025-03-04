@@ -221,22 +221,23 @@ export default function ApiList() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Battery Diagnostics APIs</h1>
+      <h1 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-700">Battery Diagnostics APIs</h1>
 
       <div className="grid md:grid-cols-[300px_1fr] gap-8">
         <aside className="space-y-6">
           <div>
-            <Label htmlFor="search">Search</Label>
+            <Label htmlFor="search" className="text-blue-700">Search</Label>
             <Input
               id="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search APIs..."
+              className="border-blue-200 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <Label>Battery Type</Label>
+            <Label className="text-blue-700 font-medium">Battery Type</Label>
             <RadioGroup value={selectedType} onValueChange={setSelectedType}>
               {BATTERY_TYPES.map(type => (
                 <div key={type} className="flex items-center space-x-2">
@@ -248,7 +249,7 @@ export default function ApiList() {
           </div>
 
           <div>
-            <Label>Category</Label>
+            <Label className="text-blue-700 font-medium">Category</Label>
             <RadioGroup value={selectedCategory} onValueChange={setSelectedCategory}>
               {CATEGORIES.map(category => (
                 <div key={category.id} className="flex items-center space-x-2">
