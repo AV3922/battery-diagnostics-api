@@ -543,7 +543,7 @@ export default function ApiDetail() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div className="space-y-1">
-            <h1 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+            <h1 className="text-4xl font-bold tracking-tight text-white">
               {apiInfo.name}
             </h1>
             <p className="text-muted-foreground">
