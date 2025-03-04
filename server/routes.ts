@@ -61,15 +61,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Dashboard specific endpoints
-  app.get("/api/v1/diagnostics/voltage", authenticate, async (req, res) => {
+  app.get("/api/v1/diagnostics/voltage", async (req, res) => {
     try {
       // Mock data for demonstration
       res.json({
-        voltage: 48.2,
+        voltage: 48.2 + (Math.random() * 0.4 - 0.2), // Add some variation
         nominalVoltage: 48.0,
         stateOfCharge: 85,
         estimatedRange: 150,
-        temperature: 25,
+        temperature: 25 + (Math.random() * 2 - 1),
         temperatureStatus: "Normal"
       });
     } catch (err) {
@@ -77,12 +77,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/v1/diagnostics/cell-balance", authenticate, async (req, res) => {
+  app.get("/api/v1/diagnostics/cell-balance", async (req, res) => {
     try {
-      // Mock data for demonstration
+      // Mock data with some variation
+      const baseVoltage = 3.95;
+      const cellVoltages = Array.from({ length: 8 }, () => 
+        baseVoltage + (Math.random() * 0.04 - 0.02)
+      );
+
       res.json({
-        cellVoltages: [3.95, 3.97, 3.96, 3.94, 3.95, 3.96, 3.97, 3.95],
-        maxImbalance: 0.03,
+        cellVoltages,
+        maxImbalance: Math.max(...cellVoltages) - Math.min(...cellVoltages),
         balanceStatus: "Good"
       });
     } catch (err) {
@@ -90,14 +95,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/v1/diagnostics/history", authenticate, async (req, res) => {
+  app.get("/api/v1/diagnostics/history", async (req, res) => {
     try {
-      // Mock data for demonstration
       const now = Date.now();
       const history = Array.from({ length: 24 }, (_, i) => ({
         timestamp: new Date(now - i * 3600000).toISOString(),
-        charge: Math.random() * 5,
-        discharge: Math.random() * 3
+        charge: 2 + Math.random() * 3,
+        discharge: 1 + Math.random() * 2
       })).reverse();
 
       res.json({

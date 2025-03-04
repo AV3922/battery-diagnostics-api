@@ -18,37 +18,25 @@ import { Battery, Zap, Timer, Thermometer } from "lucide-react";
 
 // Function to fetch battery data
 const fetchBatteryData = async () => {
-  const response = await fetch("/api/v1/diagnostics/voltage", {
-    headers: {
-      "x-api-key": "demo-key", // This should be replaced with actual API key
-    },
-  });
+  const response = await fetch("/api/v1/diagnostics/voltage");
   return response.json();
 };
 
 // Function to fetch cell voltages
 const fetchCellVoltages = async () => {
-  const response = await fetch("/api/v1/diagnostics/cell-balance", {
-    headers: {
-      "x-api-key": "demo-key",
-    },
-  });
+  const response = await fetch("/api/v1/diagnostics/cell-balance");
   return response.json();
 };
 
 // Function to fetch charge history
 const fetchChargeHistory = async () => {
-  const response = await fetch("/api/v1/diagnostics/history", {
-    headers: {
-      "x-api-key": "demo-key",
-    },
-  });
+  const response = await fetch("/api/v1/diagnostics/history");
   return response.json();
 };
 
 export default function Dashboard() {
   const [voltageHistory, setVoltageHistory] = useState<any[]>([]);
-  
+
   // Real-time voltage data
   const { data: voltageData } = useQuery({
     queryKey: ["/api/v1/diagnostics/voltage"],
@@ -83,7 +71,7 @@ export default function Dashboard() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8">Battery Monitoring Dashboard</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {/* Current Stats */}
         <Card>
