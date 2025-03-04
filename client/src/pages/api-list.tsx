@@ -265,7 +265,7 @@ export default function ApiList() {
           </div>
         </aside>
 
-        <main className="bg-gradient-matte-black min-h-screen">
+        <main>
           <div className="grid md:grid-cols-2 gap-6">
             {filteredApis.map(api => (
               <ApiCard key={api.id} {...api} />

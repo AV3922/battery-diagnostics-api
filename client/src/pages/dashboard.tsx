@@ -1,39 +1,3 @@
-
-import { DashboardLayout } from "@/components/layouts/dashboard-layout";
-
-export default function Dashboard() {
-  return (
-    <div className="bg-gradient-matte-black min-h-screen">
-      <DashboardLayout>
-        <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Dashboard content goes here */}
-            <div className="bg-card rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">API Usage</h2>
-              <div className="text-2xl font-bold">1,243</div>
-              <div className="text-muted-foreground">Requests this month</div>
-            </div>
-            
-            <div className="bg-card rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">Diagnostics</h2>
-              <div className="text-2xl font-bold">87</div>
-              <div className="text-muted-foreground">Completed diagnostics</div>
-            </div>
-            
-            <div className="bg-card rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">Alerts</h2>
-              <div className="text-2xl font-bold">2</div>
-              <div className="text-muted-foreground">Active alerts</div>
-            </div>
-          </div>
-        </div>
-      </DashboardLayout>
-    </div>
-  );
-}
-
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
