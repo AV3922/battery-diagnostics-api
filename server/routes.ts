@@ -60,6 +60,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dashboard specific endpoints
+  app.get("/api/v1/diagnostics/voltage", authenticate, async (req, res) => {
+    try {
+      // Mock data for demonstration
+      res.json({
+        voltage: 48.2,
+        nominalVoltage: 48.0,
+        stateOfCharge: 85,
+        estimatedRange: 150,
+        temperature: 25,
+        temperatureStatus: "Normal"
+      });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get("/api/v1/diagnostics/cell-balance", authenticate, async (req, res) => {
+    try {
+      // Mock data for demonstration
+      res.json({
+        cellVoltages: [3.95, 3.97, 3.96, 3.94, 3.95, 3.96, 3.97, 3.95],
+        maxImbalance: 0.03,
+        balanceStatus: "Good"
+      });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get("/api/v1/diagnostics/history", authenticate, async (req, res) => {
+    try {
+      // Mock data for demonstration
+      const now = Date.now();
+      const history = Array.from({ length: 24 }, (_, i) => ({
+        timestamp: new Date(now - i * 3600000).toISOString(),
+        charge: Math.random() * 5,
+        discharge: Math.random() * 3
+      })).reverse();
+
+      res.json({
+        cycleCount: 245,
+        lastCharged: new Date(now - 3600000).toISOString(),
+        chargeHistory: history
+      });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   app.get("/api/diagnostics", authenticate, async (req, res) => {
     try {
       const diagnostics = await storage.getDiagnostics(req.user.id);

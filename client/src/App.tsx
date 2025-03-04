@@ -6,6 +6,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import ApiList from "@/pages/api-list";
 import ApiDetail from "@/pages/api-detail";
+import Dashboard from "@/pages/dashboard";
 import Navbar from "@/components/navigation/navbar";
 import Footer from "@/components/footer";
 
@@ -18,6 +19,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/api-list" component={ApiList} />
           <Route path="/api-detail/:endpoint" component={ApiDetail} />
+          <Route path="/dashboard" component={Dashboard} />
           <Route component={NotFound} />
         </Switch>
       </main>
