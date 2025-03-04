@@ -683,8 +683,8 @@ export default function ApiDetail() {
                 <tbody className="divide-y divide-border/40">
                   {apiInfo.responseParameters.map((param) => (
                     <tr key={param.name} className="hover:bg-muted/50 transition-colors">
-                      <td className="p-4 font-mono text-sm">{param.name}</td>
-                      <td className="p-4 text-muted-foreground">{param.description}</td>
+                      <td className="p-4 font-mono text-base">{param.name}</td>
+                      <td className="p-4 text-muted-foreground parameter-cell">{param.description}</td>
                     </tr>
                   ))}
                 </tbody>

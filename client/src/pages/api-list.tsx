@@ -221,7 +221,7 @@ export default function ApiList() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-700">Battery Diagnostics APIs</h1>
+      <h1 className="text-4xl font-bold mb-8">Battery Diagnostics APIs</h1>
 
       <div className="grid md:grid-cols-[300px_1fr] gap-8">
         <aside className="space-y-6">

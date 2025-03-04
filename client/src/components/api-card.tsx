@@ -14,13 +14,13 @@ export default function ApiCard({ id, name, description, batteryTypes }: ApiCard
   return (
     <Card className="border-t-4 border-t-gradient-blue-light">
       <CardHeader>
-        <CardTitle className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-700">{name}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle>{name}</CardTitle>
+        <CardDescription className="text-sm">{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-2 mb-4">
           {batteryTypes.map(type => (
-            <Badge key={type} variant="secondary" className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800">{type}</Badge>
+            <Badge key={type} variant="secondary" className="text-sm py-1 px-2">{type}</Badge>
           ))}
         </div>
 
