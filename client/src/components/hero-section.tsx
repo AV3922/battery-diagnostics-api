@@ -3,7 +3,7 @@ import { Link } from "wouter";
 
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-background border-b">
+    <section className="relative overflow-hidden bg-gradient-to-br from-black to-gray-900 border-b">
       <div className="container mx-auto px-4 py-24">
         <div className="text-center max-w-3xl mx-auto">
           <h1 className="text-5xl font-bold tracking-tight mb-6">
