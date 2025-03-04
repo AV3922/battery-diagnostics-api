@@ -12,7 +12,7 @@ interface ApiCardProps {
 
 export default function ApiCard({ id, name, description, batteryTypes }: ApiCardProps) {
   return (
-    <Card className="border-t-4 border-t-gradient-blue-light">
+    <Card className="border-t-4 border-t-black">
       <CardHeader>
         <CardTitle>{name}</CardTitle>
         <CardDescription className="text-sm">{description}</CardDescription>

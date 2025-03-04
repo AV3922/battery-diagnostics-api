@@ -225,6 +225,10 @@ export default function ApiList() {
 
       <div className="grid md:grid-cols-[300px_1fr] gap-8">
         <aside className="space-y-6">
+          <div className="bg-background/60 backdrop-blur p-6 rounded-xl border border-border/40 mb-6">
+            <h3 className="text-xl font-semibold mb-4">Filter APIs</h3>
+          </div>
+
           <div>
             <Label htmlFor="search" className="text-blue-700">Search</Label>
             <Input
