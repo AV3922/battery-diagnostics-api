@@ -67,7 +67,7 @@ export default function Dashboard() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-4xl font-bold gradient-text">Battery Management System</h1> {/* Added gradient class */}
+          <h1 className="text-4xl font-bold">Battery Management System</h1>
           <p className="text-muted-foreground mt-2">AI-Powered Real-Time Analytics</p>
         </div>
         <Badge variant="outline" className="text-xl py-2">
@@ -77,7 +77,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {/* Current Stats */}
-        <Card className="bg-card/50 backdrop-blur border-blue-gradient"> {/* Added gradient class */}
+        <Card className="bg-card/50 backdrop-blur">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pack Voltage</CardTitle>
             <Battery className="h-4 w-4 text-primary" />
@@ -91,7 +91,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur border-blue-gradient"> {/* Added gradient class */}
+        <Card className="bg-card/50 backdrop-blur">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">State of Charge</CardTitle>
             <Zap className="h-4 w-4 text-primary" />
@@ -105,7 +105,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur border-blue-gradient"> {/* Added gradient class */}
+        <Card className="bg-card/50 backdrop-blur">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Power Analysis</CardTitle>
             <Activity className="h-4 w-4 text-primary" />
@@ -119,7 +119,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur border-blue-gradient"> {/* Added gradient class */}
+        <Card className="bg-card/50 backdrop-blur">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Health Status</CardTitle>
             <AlertTriangle className="h-4 w-4 text-primary" />
@@ -136,9 +136,9 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Voltage History Chart */}
-        <Card className="border-blue-gradient"> {/* Added gradient class */}
+        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 gradient-text"> {/* Added gradient class */}
+            <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
               Voltage Telemetry
             </CardTitle>
@@ -166,9 +166,9 @@ export default function Dashboard() {
         </Card>
 
         {/* Cell Voltages */}
-        <Card className="border-blue-gradient"> {/* Added gradient class */}
+        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 gradient-text"> {/* Added gradient class */}
+            <CardTitle className="flex items-center gap-2">
               <Cpu className="h-5 w-5" />
               Cell Balance Analysis
             </CardTitle>
@@ -193,9 +193,9 @@ export default function Dashboard() {
         </Card>
 
         {/* Thermal Map */}
-        <Card className="lg:col-span-2 border-blue-gradient"> {/* Added gradient class */}
+        <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 gradient-text"> {/* Added gradient class */}
+            <CardTitle className="flex items-center gap-2">
               <BarChart2 className="h-5 w-5" />
               Energy Flow Analysis
             </CardTitle>
@@ -234,9 +234,9 @@ export default function Dashboard() {
 
       {/* AI Insights Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-card/50 backdrop-blur border-blue-gradient"> {/* Added gradient class */}
+        <Card className="bg-card/50 backdrop-blur">
           <CardHeader>
-            <CardTitle className="text-sm gradient-text"> {/* Added gradient class */} AI Health Prediction</CardTitle>
+            <CardTitle className="text-sm">AI Health Prediction</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-sm space-y-2">
@@ -250,9 +250,9 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur border-blue-gradient"> {/* Added gradient class */}
+        <Card className="bg-card/50 backdrop-blur">
           <CardHeader>
-            <CardTitle className="text-sm gradient-text"> {/* Added gradient class */}Performance Optimization</CardTitle>
+            <CardTitle className="text-sm">Performance Optimization</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-sm space-y-2">
@@ -266,9 +266,9 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur border-blue-gradient"> {/* Added gradient class */}
+        <Card className="bg-card/50 backdrop-blur">
           <CardHeader>
-            <CardTitle className="text-sm gradient-text"> {/* Added gradient class */}Predictive Maintenance</CardTitle>
+            <CardTitle className="text-sm">Predictive Maintenance</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-sm space-y-2">
