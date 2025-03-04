@@ -63,14 +63,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard specific endpoints
   app.get("/api/v1/diagnostics/voltage", async (req, res) => {
     try {
-      // Mock data for demonstration
+      // Simulate real-time voltage data with natural variations
+      const baseVoltage = 48.2;
+      const variation = Math.random() * 0.4 - 0.2;
+      const temperature = 25 + (Math.random() * 2 - 1);
+      const efficiency = 94.8 + (Math.random() * 1 - 0.5);
+
       res.json({
-        voltage: 48.2 + (Math.random() * 0.4 - 0.2), // Add some variation
+        voltage: baseVoltage + variation,
         nominalVoltage: 48.0,
-        stateOfCharge: 85,
-        estimatedRange: 150,
-        temperature: 25 + (Math.random() * 2 - 1),
-        temperatureStatus: "Normal"
+        stateOfCharge: 85 + (Math.random() * 2 - 1),
+        estimatedRange: 150 + Math.floor(Math.random() * 10 - 5),
+        temperature,
+        temperatureStatus: temperature < 30 ? "Normal" : "Warning",
+        efficiency: efficiency.toFixed(1),
+        powerOutput: (baseVoltage * 10).toFixed(1),
+        cellHealth: 97.2,
+        predictedLifetime: "2.3 years"
       });
     } catch (err) {
       res.status(500).json({ message: "Internal server error" });
@@ -79,16 +88,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/v1/diagnostics/cell-balance", async (req, res) => {
     try {
-      // Mock data with some variation
+      // Generate realistic cell voltage data
       const baseVoltage = 3.95;
-      const cellVoltages = Array.from({ length: 8 }, () => 
+      const cellCount = 8;
+      const cellVoltages = Array.from({ length: cellCount }, () =>
         baseVoltage + (Math.random() * 0.04 - 0.02)
       );
 
+      // Calculate statistics
+      const maxVoltage = Math.max(...cellVoltages);
+      const minVoltage = Math.min(...cellVoltages);
+      const avgVoltage = cellVoltages.reduce((a, b) => a + b, 0) / cellCount;
+
       res.json({
         cellVoltages,
-        maxImbalance: Math.max(...cellVoltages) - Math.min(...cellVoltages),
-        balanceStatus: "Good"
+        maxImbalance: (maxVoltage - minVoltage).toFixed(3),
+        balanceStatus: (maxVoltage - minVoltage) < 0.05 ? "Good" : "Needs Balancing",
+        statistics: {
+          max: maxVoltage.toFixed(3),
+          min: minVoltage.toFixed(3),
+          average: avgVoltage.toFixed(3),
+          standardDeviation: Math.sqrt(
+            cellVoltages.reduce((sq, n) => sq + Math.pow(n - avgVoltage, 2), 0) / cellCount
+          ).toFixed(3)
+        }
       });
     } catch (err) {
       res.status(500).json({ message: "Internal server error" });
@@ -98,16 +121,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/v1/diagnostics/history", async (req, res) => {
     try {
       const now = Date.now();
-      const history = Array.from({ length: 24 }, (_, i) => ({
-        timestamp: new Date(now - i * 3600000).toISOString(),
-        charge: 2 + Math.random() * 3,
-        discharge: 1 + Math.random() * 2
-      })).reverse();
+      // Generate more realistic charge/discharge patterns
+      const history = Array.from({ length: 24 }, (_, i) => {
+        const hour = i;
+        // Simulate higher usage during day hours (8-20)
+        const isDayTime = hour >= 8 && hour <= 20;
+        const baseCharge = isDayTime ? 2 : 1;
+        const baseDischarge = isDayTime ? 3 : 0.5;
+
+        return {
+          timestamp: new Date(now - i * 3600000).toISOString(),
+          charge: baseCharge + Math.random() * 1.5,
+          discharge: baseDischarge + Math.random() * 1,
+          efficiency: 94 + Math.random() * 2,
+          temperature: 25 + Math.random() * 5
+        };
+      }).reverse();
 
       res.json({
         cycleCount: 245,
         lastCharged: new Date(now - 3600000).toISOString(),
-        chargeHistory: history
+        chargeHistory: history,
+        analytics: {
+          averageEfficiency: 95.2,
+          peakPower: 2300,
+          totalEnergyToday: 45.6,
+          predictedCycles: 1200
+        }
       });
     } catch (err) {
       res.status(500).json({ message: "Internal server error" });
@@ -139,7 +179,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(data);
     } catch (err) {
       console.error("FastAPI health check failed:", err);
-      res.status(503).json({ 
+      res.status(503).json({
         status: "error",
         message: "FastAPI service unavailable",
         error: err instanceof Error ? err.message : String(err)
