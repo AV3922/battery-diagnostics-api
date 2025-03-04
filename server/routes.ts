@@ -1,7 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertUserSchema, insertDiagnosticSchema } from "@shared/schema";
+import { insertUserSchema, insertDiagnosticSchema, insertAlertThresholdSchema } from "@shared/schema";
 import { ZodError } from "zod";
 
 // Add custom type for Request to include user
@@ -158,6 +158,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const diagnostics = await storage.getDiagnostics(req.user.id);
       res.json(diagnostics);
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+
+  // Alert Threshold Routes
+  app.post("/api/v1/alert-thresholds", authenticate, async (req, res) => {
+    try {
+      const thresholdData = insertAlertThresholdSchema.parse(req.body);
+      const threshold = await storage.createAlertThreshold(req.user.id, thresholdData);
+      res.json(threshold);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        res.status(400).json({ message: err.errors });
+      } else {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
+  app.get("/api/v1/alert-thresholds", authenticate, async (req, res) => {
+    try {
+      const thresholds = await storage.getAlertThresholds(req.user.id);
+      res.json(thresholds);
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get("/api/v1/alert-history", authenticate, async (req, res) => {
+    try {
+      const history = await storage.getAlertHistory(req.user.id);
+      res.json(history);
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/v1/alert-thresholds/:id", authenticate, async (req, res) => {
+    try {
+      const threshold = await storage.updateAlertThreshold(
+        req.user.id,
+        parseInt(req.params.id),
+        req.body
+      );
+      res.json(threshold);
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.patch("/api/v1/alert-history/:id/acknowledge", authenticate, async (req, res) => {
+    try {
+      const alert = await storage.acknowledgeAlert(
+        req.user.id,
+        parseInt(req.params.id)
+      );
+      res.json(alert);
     } catch (err) {
       res.status(500).json({ message: "Internal server error" });
     }

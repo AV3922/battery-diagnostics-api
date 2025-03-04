@@ -7,6 +7,7 @@ import Home from "@/pages/home";
 import ApiList from "@/pages/api-list";
 import ApiDetail from "@/pages/api-detail";
 import Dashboard from "@/pages/dashboard";
+import AlertSettings from "@/pages/alert-settings";
 import Navbar from "@/components/navigation/navbar";
 import Footer from "@/components/footer";
 
@@ -21,6 +22,7 @@ function Router() {
           <Route path="/api-detail/:endpoint" component={ApiDetail} />
           <Route path="/docs" component={Dashboard} />
           <Route path="/dashboard" component={Dashboard} />
+          <Route path="/alerts" component={AlertSettings} />
           <Route component={NotFound} />
         </Switch>
       </main>
