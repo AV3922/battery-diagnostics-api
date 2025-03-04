@@ -223,9 +223,10 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
 
 if __name__ == "__main__":
     import uvicorn
+    import os
     try:
-        # ALWAYS serve the app on port 5000
-        port = 5000
+        # Use Render's PORT dynamically
+        port = int(os.getenv("PORT", 8000))  
         logger.info(f"Starting FastAPI server on port {port}")
         uvicorn.run(app, host="0.0.0.0", port=port, reload=True)
     except Exception as e:
