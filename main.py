@@ -85,7 +85,7 @@ async def shutdown_event():
     """Execute on application shutdown"""
     logger.info("FastAPI application shutting down...")
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root():
     """Root endpoint to verify API is running"""
     logger.info("Root endpoint accessed")
@@ -95,6 +95,7 @@ async def root():
         "documentation": "/docs",
         "health_check": "/health"
     })
+
 
 @app.get("/health")
 async def health_check():
