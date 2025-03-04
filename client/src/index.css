@@ -18,7 +18,8 @@
   
   .bg-gradient-blue-vibrant {
     background: linear-gradient(90deg, #2563eb 0%, #4f46e5 100%);
-
+  }
+  
 /* Matte black gradient styles */
 .bg-gradient-matte-black {
   background: linear-gradient(135deg, #121212 0%, #1e1e1e 100%);
@@ -27,8 +28,6 @@
 .bg-gradient-matte-dark {
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 }
-
-  }
   
   .border-t-gradient-blue-light {
     border-image: linear-gradient(to right, #93c5fd, #60a5fa) 1;

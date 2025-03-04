@@ -220,10 +220,11 @@ export default function ApiList() {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Battery Diagnostics APIs</h1>
+    <div className="min-h-screen bg-gradient-matte-black">
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold mb-8">Battery Diagnostics APIs</h1>
 
-      <div className="grid md:grid-cols-[300px_1fr] gap-8">
+        <div className="grid md:grid-cols-[300px_1fr] gap-8">
         <aside className="space-y-6">
           <div className="bg-background/60 backdrop-blur p-6 rounded-xl border border-border/40 mb-6">
             <h3 className="text-xl font-semibold mb-4">Filter APIs</h3>
@@ -273,6 +274,7 @@ export default function ApiList() {
           </div>
         </main>
       </div>
+    </div>
     </div>
   );
 }
