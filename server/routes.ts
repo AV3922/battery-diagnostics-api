@@ -30,6 +30,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   };
 
+  // Proxy requests to FastAPI Swagger UI
+  app.use(["/docs", "/redoc", "/openapi.json"], async (req, res) => {
+    try {
+      const path = req.originalUrl;
+      console.log(`Proxying request to FastAPI: ${path}`);
+
+      const response = await fetch(`http://0.0.0.0:8000${path}`, {
+        method: req.method,
+        headers: {
+          'Accept': 'application/json, text/html',
+          'Content-Type': req.headers['content-type'] || 'application/json'
+        },
+        body: req.method !== 'GET' ? JSON.stringify(req.body) : undefined
+      });
+
+      if (!response.ok) {
+        throw new Error(`FastAPI responded with status: ${response.status}`);
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (contentType?.includes('application/json')) {
+        const data = await response.json();
+        res.json(data);
+      } else {
+        const text = await response.text();
+        res.set('Content-Type', contentType || 'text/html');
+        res.send(text);
+      }
+    } catch (err) {
+      console.error("Error proxying to FastAPI:", err);
+      res.status(503).json({
+        status: "error",
+        message: "FastAPI service unavailable",
+        error: err instanceof Error ? err.message : String(err)
+      });
+    }
+  });
+
   // User routes
   app.post("/api/users", async (req, res) => {
     try {
