@@ -30,7 +30,7 @@ export default function Navbar() {
             <Button variant="outline" className="border-border/40">
               Sign In
             </Button>
-            <Button className="bg-primary hover:bg-primary/90">
+            <Button className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 transition-all duration-200">
               <Shield className="h-4 w-4 mr-2" />
               Get API Key
             </Button>
