@@ -165,6 +165,7 @@ class VoltageRequest(BaseModel):
             
         return self
 
+
 class ThermalRequest(BaseModel):
     batteryType: str = Field(..., description="Battery chemistry type")
     temperature: float = Field(..., description="Current temperature")

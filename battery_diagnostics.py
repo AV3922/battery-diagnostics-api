@@ -2,7 +2,7 @@ from typing import List, Dict
 from datetime import datetime, timedelta
 
 
-class BatteryDiagnostics:
+class battery_diagnostics:
     # Battery chemistry specifications
     BATTERY_TYPES = {
         # Main battery chemistry types
@@ -159,13 +159,13 @@ class BatteryDiagnostics:
     @staticmethod
     def get_battery_specs(battery_type: str, nominal_voltage: float):
         """Generate battery specifications based on type and nominal voltage"""
-        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
+        if battery_type not in battery_diagnostics.BATTERY_TYPES:
             raise ValueError(f"Unknown battery type: {battery_type}")
 
         if nominal_voltage is None:
             raise ValueError(f"Nominal voltage must be provided for battery type: {battery_type}")
 
-        battery_info = BatteryDiagnostics.BATTERY_TYPES[battery_type]
+        battery_info = battery_diagnostics.BATTERY_TYPES[battery_type]
         voltage_specs = battery_info["voltage_specs"]
 
         # Validate that the nominal voltage is one of the predefined values
@@ -189,10 +189,10 @@ class BatteryDiagnostics:
     def _validate_temperature(temperature: float, battery_type: str) -> float:
         """Validate and calculate temperature compensation factor"""
         # Get temperature specifications directly from the battery type
-        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
+        if battery_type not in battery_diagnostics.BATTERY_TYPES:
             raise ValueError(f"Unknown battery type: {battery_type}")
 
-        specs = BatteryDiagnostics.BATTERY_TYPES[battery_type]
+        specs = battery_diagnostics.BATTERY_TYPES[battery_type]
 
         if temperature > specs["max_temp"]:
             raise ValueError(
@@ -221,10 +221,10 @@ class BatteryDiagnostics:
     def calculate_soc(voltage: float, battery_type: str, temperature: float,
                       current: float, nominal_voltage: float) -> Dict:
         """Calculate State of Charge using voltage-based estimation with enhanced temperature compensation"""
-        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
+        if battery_type not in battery_diagnostics.BATTERY_TYPES:
             raise ValueError(f"Unknown battery type: {battery_type}")
 
-        specs = BatteryDiagnostics.get_battery_specs(battery_type,
+        specs = battery_diagnostics.get_battery_specs(battery_type,
                                                      nominal_voltage)
 
         # Validate voltage
@@ -238,7 +238,7 @@ class BatteryDiagnostics:
             )
 
         # Get temperature compensation
-        temp_factor = BatteryDiagnostics._validate_temperature(
+        temp_factor = battery_diagnostics._validate_temperature(
             temperature, battery_type)
 
         # Enhanced SOC calculation with temperature compensation
@@ -402,7 +402,7 @@ class BatteryDiagnostics:
     def monitor_safety(voltage: float, current: float, temperature: float,
                        pressure: float, battery_type: str) -> Dict:
         """Monitor battery safety parameters and assess risks"""
-        specs = BatteryDiagnostics.get_battery_specs(battery_type, nominal_voltage)
+        specs = battery_diagnostics.get_battery_specs(battery_type, nominal_voltage)
         warnings = []
         risk_level = "Low"
 
@@ -531,21 +531,17 @@ class BatteryDiagnostics:
                         nominal_voltage: float,
                         temperature: float) -> Dict:
             """Analyze voltage levels and provide detailed insights"""
-            if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
+            if battery_type not in battery_diagnostics.BATTERY_TYPES:
                 raise ValueError(f"Unknown battery type: {battery_type}")
 
-            specs = BatteryDiagnostics.get_battery_specs(
+            specs = battery_diagnostics.get_battery_specs(
                 battery_type, nominal_voltage)
 
             # Validate voltage
             if voltage > specs["max_voltage"]:
-                raise ValueError(
-                    f"Voltage {voltage}V exceeds maximum allowed {specs['max_voltage']}V"
-                )
+                raise ValueError(f"Voltage {voltage}V exceeds maximum allowed {specs['max_voltage']}V")
             if voltage < specs["min_voltage"]:
-                raise ValueError(
-                    f"Voltage {voltage}V below minimum allowed {specs['min_voltage']}V"
-                )
+                raise ValueError(f"Voltage {voltage}V below minimum allowed {specs['min_voltage']}V")
 
             # Calculate voltage health percentage
             voltage_range = specs["max_voltage"] - specs["min_voltage"]
@@ -613,7 +609,7 @@ class BatteryDiagnostics:
         severity = "Normal"
 
         # Check for short circuit
-        if voltage < BatteryDiagnostics.BATTERY_TYPES[battery_type][
+        if voltage < battery_diagnostics.BATTERY_TYPES[battery_type][
                 "min_voltage"] * 0.5:
             faults.append("Possible short circuit")
             severity = "Critical"
