@@ -162,10 +162,12 @@ class BatteryDiagnostics:
         if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
             raise ValueError(f"Unknown battery type: {battery_type}")
 
-        if nominal_voltage is None:
-            raise ValueError(
-                f"Nominal voltage must be provided for battery type: {battery_type}"
-            )
+        if nominal_voltage not in voltage_specs:
+    available_voltages = list(voltage_specs.keys())
+    raise ValueError(
+        f"Invalid nominal voltage: {nominal_voltage}. Available nominal voltages for {battery_type}: {available_voltages}"
+    )
+
 
         battery_info = BatteryDiagnostics.BATTERY_TYPES[battery_type]
         voltage_specs = battery_info["voltage_specs"]
@@ -252,15 +254,16 @@ class BatteryDiagnostics:
         soc = 100 * ((voltage_normalized / voltage_range))
         # soc = soc * temp_factor
 
-            # Determine charging status
+        # Determine charging status
         Charging_status = "Idle"
-        if current > 0:
-            Charging_status = "Charging"
-        elif current < 0:
-            Charging_status = "Discharging"
-        elif current == 0:
-            if voltage == specs["max_voltage"]:
-                Charging_status = "Full"
+if current is not None:
+    if current > 0:
+        Charging_status = "Charging"
+    elif current < 0:
+        Charging_status = "Discharging"
+    elif current == 0 and voltage == specs["max_voltage"]:
+        Charging_status = "Full"
+
 
         return {
             "stateOfCharge": min(max(soc, 0), 100),
@@ -308,8 +311,12 @@ class BatteryDiagnostics:
     @staticmethod
     def measure_internal_resistance(voltage: float, current: float,
                                     temperature: float,
-                                    battery_type: str) -> Dict:
+                                    battery_type: str) -> Dict:                           
         """Calculate internal resistance and assess battery condition"""
+        
+        if current == 0:
+           raise ValueError("Cannot measure resistance with zero current.")
+
         # Basic internal resistance calculation (ΔV/ΔI)
         resistance = abs((voltage / current) * 1000)  # Convert to mΩ
 
@@ -399,7 +406,7 @@ class BatteryDiagnostics:
     def monitor_safety(voltage: float, current: float, temperature: float,
                        pressure: float, battery_type: str) -> Dict:
         """Monitor battery safety parameters and assess risks"""
-        specs = BatteryDiagnostics.BATTERY_TYPES[battery_type]
+        specs = BatteryDiagnostics.get_battery_specs(battery_type, nominal_voltage)
         warnings = []
         risk_level = "Low"
 
@@ -494,6 +501,7 @@ class BatteryDiagnostics:
                             current_soh: float) -> Dict:
         """Predict remaining cycle life based on usage patterns"""
         # Base cycle life estimation
+
         base_cycles = 2000  # Standard Li-ion cycle life
 
         # Adjust for depth of discharge
@@ -510,7 +518,8 @@ class BatteryDiagnostics:
 
         # Calculate remaining cycles
         remaining_cycles = int(base_cycles * (current_soh / 100))
-        confidence = 90 - (cycle_count / 100)  # Confidence decreases with age
+        confidence = max(min(confidence, 95), 70)  # Raise floor to 70
+
 
         return {
             "remainingCycles":
@@ -521,6 +530,88 @@ class BatteryDiagnostics:
             "confidenceLevel":
             max(min(confidence, 95), 60)
         }
+
+    @staticmethod
+    def analyze_voltage(voltage: float, battery_type: str,
+                        nominal_voltage: float,
+                        temperature: float) -> Dict:
+            """Analyze voltage levels and provide detailed insights"""
+            if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
+                raise ValueError(f"Unknown battery type: {battery_type}")
+
+            specs = BatteryDiagnostics.get_battery_specs(
+                battery_type, nominal_voltage)
+
+            # Validate voltage
+            if voltage > specs["max_voltage"]:
+                raise ValueError(
+                    f"Voltage {voltage}V exceeds maximum allowed {specs['max_voltage']}V"
+                )
+            if voltage < specs["min_voltage"]:
+                raise ValueError(
+                    f"Voltage {voltage}V below minimum allowed {specs['min_voltage']}V"
+                )
+
+            # Calculate voltage health percentage
+            voltage_range = specs["max_voltage"] - specs["min_voltage"]
+            voltage_normalized = voltage - specs["min_voltage"]
+            voltage_percentage = (voltage_normalized / voltage_range) * 100
+
+            # Analyze voltage stability (example with static values, real implementation would use time-series data)
+           voltage_range = specs["max_voltage"] - specs["min_voltage"]
+voltage_stability = "Stable"
+
+if voltage > specs["nominal_voltage"] + (voltage_range * 0.1):
+    voltage_stability = "High"
+elif voltage < specs["nominal_voltage"] - (voltage_range * 0.1):
+    voltage_stability = "Low"
+
+
+            # Determine voltage health status
+            if voltage_percentage > 90:
+                health_status = "Excellent"
+            elif voltage_percentage > 70:
+                health_status = "Good"
+            elif voltage_percentage > 50:
+                health_status = "Fair"
+            else:
+                health_status = "Poor"
+
+            # Include temperature effect on voltage
+            temp_effect = "None"
+            if temperature > 40:
+                temp_effect = "Voltage may read artificially high due to elevated temperature"
+            elif temperature < 10:
+                temp_effect = "Voltage may read artificially low due to low temperature"
+
+            # Calculate ripple (in a real implementation, this would use measured ripple)
+            # Here we simulate a ripple value between 0.5% and 2% of nominal voltage
+            ripple = (0.005 + (abs(hash(str(voltage))) % 15) /
+                      1000) * specs["nominal_voltage"]
+
+            return {
+                "actualVoltage":
+                voltage,
+                "nominalVoltage":
+                specs["nominal_voltage"],
+                "minVoltage":
+                specs["min_voltage"],
+                "maxVoltage":
+                specs["max_voltage"],
+                "voltagePercentage":
+                round(voltage_percentage, 2),
+                "voltageStatus":
+                health_status,
+                "voltageStability":
+                voltage_stability,
+                "rippleVoltage":
+                round(ripple, 3),
+                "temperatureEffect":
+                temp_effect,
+                "recommendation":
+                "Monitor voltage level"
+                if voltage_percentage < 60 else "Voltage level is optimal"
+            }
 
     @staticmethod
     def detect_faults(voltage: float, current: float, temperature: float,

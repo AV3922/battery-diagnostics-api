@@ -139,6 +139,32 @@ class SafetyRequest(BaseModel):
             raise ValueError("Pressure exceeds safety threshold")
         return self
 
+
+class VoltageRequest(BaseModel):
+    batteryType: str = Field(..., description="Battery chemistry type (e.g., Li-ion, LFP, Lead-acid)")
+    voltage: float = Field(..., description="Battery voltage in volts")
+    nominalVoltage: float = Field(..., description="Nominal voltage of the battery")
+    temperature: float = Field(..., description="Battery temperature in Celsius")
+
+    @model_validator(mode='after')
+    def validate_parameters(self) -> 'VoltageRequest':
+        from battery_diagnostics import BatteryDiagnostics
+        
+        valid_types = list(BatteryDiagnostics.BATTERY_TYPES.keys())
+        if self.batteryType not in valid_types:
+            raise ValueError(f"Battery type '{self.batteryType}' is not valid. Valid types are: {valid_types}")
+            
+        if self.voltage <= 0 or self.voltage > 100:
+            raise ValueError("Voltage must be positive and less than 100V")
+            
+        if self.nominalVoltage <= 0 or self.nominalVoltage > 500:
+            raise ValueError("Nominal voltage must be positive and less than 500V")
+            
+        if self.temperature < -40 or self.temperature > 100:
+            raise ValueError("Temperature must be between -40°C and 100°C")
+            
+        return self
+
 class ThermalRequest(BaseModel):
     batteryType: str = Field(..., description="Battery chemistry type")
     temperature: float = Field(..., description="Current temperature")
