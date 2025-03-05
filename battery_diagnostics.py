@@ -157,37 +157,32 @@ class BatteryDiagnostics:
     }
 
     @staticmethod
-    def get_battery_specs(battery_type: str, nominal_voltage: float):
-        """Generate battery specifications based on type and nominal voltage"""
-        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
-            raise ValueError(f"Unknown battery type: {battery_type}")
+def get_battery_specs(battery_type: str, nominal_voltage: float):
+    """Generate battery specifications based on type and nominal voltage"""
+    if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
+        raise ValueError(f"Unknown battery type: {battery_type}")
 
-        if nominal_voltage not in voltage_specs:
-    available_voltages = list(voltage_specs.keys())
-    raise ValueError(
-        f"Invalid nominal voltage: {nominal_voltage}. Available nominal voltages for {battery_type}: {available_voltages}"
-    )
+    if nominal_voltage is None:
+        raise ValueError(f"Nominal voltage must be provided for battery type: {battery_type}")
 
+    battery_info = BatteryDiagnostics.BATTERY_TYPES[battery_type]
+    voltage_specs = battery_info["voltage_specs"]
 
-        battery_info = BatteryDiagnostics.BATTERY_TYPES[battery_type]
-        voltage_specs = battery_info["voltage_specs"]
+    # Validate that the nominal voltage is one of the predefined values
+    if nominal_voltage not in voltage_specs:
+        available_voltages = list(voltage_specs.keys())
+        raise ValueError(
+            f"Invalid nominal voltage: {nominal_voltage}. Available nominal voltages for {battery_type}: {available_voltages}"
+        )
 
-        # Validate that the nominal voltage is one of the predefined values
-        if nominal_voltage not in voltage_specs:
-            available_voltages = list(voltage_specs.keys())
-            raise ValueError(
-                f"Invalid nominal voltage: {nominal_voltage}. Available nominal voltages for {battery_type}: {available_voltages}"
-            )
+    return {
+        "max_temp": battery_info["max_temp"],
+        "min_temp": battery_info["min_temp"],
+        "nominal_voltage": nominal_voltage,
+        "max_voltage": voltage_specs[nominal_voltage]["max_voltage"],
+        "min_voltage": voltage_specs[nominal_voltage]["min_voltage"]
+    }
 
-        specs = {
-            "max_temp": battery_info["max_temp"],
-            "min_temp": battery_info["min_temp"],
-            "nominal_voltage": nominal_voltage,
-            "max_voltage": voltage_specs[nominal_voltage]["max_voltage"],
-            "min_voltage": voltage_specs[nominal_voltage]["min_voltage"]
-        }
-
-        return specs
 
     @staticmethod
     def _validate_temperature(temperature: float, battery_type: str) -> float:
