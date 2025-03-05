@@ -26,7 +26,7 @@ app = FastAPI(
     redoc_url="/redoc",
     openapi_url="/openapi.json",
     servers=[
-        {"url": "https://battery-diagnostics-api.onrender.com", "description": "Production Server"}
+        {"url": "https://battery-diagnostics-api.onrender.com"}
     ]
 )
  
@@ -200,7 +200,8 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
         logger.error(f"Unexpected error in resistance diagnosis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.get("/")
+
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root():
     """Root endpoint to verify API is running"""
     logger.info("Root endpoint accessed")
@@ -210,11 +211,11 @@ async def root():
         "documentation": "/docs",
         "health_check": "/health"
     })
+    
 
 
 if __name__ == "__main__":
     import uvicorn
-    import os
     try:
         # Dynamically assign the correct port
         port = int(os.getenv("PORT", 8000))  
