@@ -21,10 +21,10 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Battery OS API",
     description="Advanced Battery Diagnostics and Analysis API",
-    version="1.0.0",
+    version="1.0",
     docs_url="/docs",  # ✅ Ensure Swagger UI is enabled
     redoc_url="/redoc",
-    openapi_url="/openapi.json"  # ✅ Ensure OpenAPI JSON is available
+   # openapi_url="/openapi.json"  # ✅ Ensure OpenAPI JSON is available
 )
 # Enable CORS for Replit environment
 app.add_middleware(
@@ -53,21 +53,21 @@ async def http_exception_handler(request, exc):
         }
     )
 
-@app.get("/api-list")
-async def api_list():
-    """Returns a list of available API endpoints"""
-    return {
-        "endpoints": [
-            "/",
-            "/health",
-            "/docs",
-            "/api-list",
-            "/battery/diagnose/soc",
-            "/battery/diagnose/soh",
-            "/battery/diagnose/resistance",
-            "/battery/logs"
-        ]
-    }
+# @app.get("/api-list")
+# async def api_list():
+  #  """Returns a list of available API endpoints"""
+   # return {
+    #    "endpoints": [
+     #       "/",
+      #      "/health",
+       #     "/docs",
+        #    "/api-list",
+         #   "/battery/diagnose/soc",
+          #  "/battery/diagnose/soh",
+           # "/battery/diagnose/resistance",
+           # "/battery/logs"
+        # ]
+  #  }
 
 
 @app.exception_handler(404)
