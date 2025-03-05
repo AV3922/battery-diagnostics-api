@@ -252,21 +252,21 @@ class BatteryDiagnostics:
 
         # Determine charging status
         Charging_status = "Idle"
-if current is not None:
-    if current > 0:
-        Charging_status = "Charging"
-    elif current < 0:
-        Charging_status = "Discharging"
-    elif current == 0 and voltage == specs["max_voltage"]:
-        Charging_status = "Full"
+        if current is not None:
+            if current > 0:
+                Charging_status = "Charging"
+            elif current < 0:
+                Charging_status = "Discharging"
+            elif current == 0 and voltage == specs["max_voltage"]:
+                Charging_status = "Full"
 
 
-        return {
-            "stateOfCharge": min(max(soc, 0), 100),
-            "estimatedRange": f"{int(soc * 0.8)} km",
-            "chargingStatus": Charging_status,
-            "temperatureCompensation": temp_factor
-        }
+                return {
+                    "stateOfCharge": min(max(soc, 0), 100),
+                    "estimatedRange": f"{int(soc * 0.8)} km",
+                    "chargingStatus": Charging_status,
+                    "temperatureCompensation": temp_factor
+                }
 
     @staticmethod
     def calculate_soh(current_capacity: float, rated_capacity: float,
@@ -526,8 +526,7 @@ if current is not None:
             "confidenceLevel":
             max(min(confidence, 95), 60)
         }
-
-    @staticmethod
+ @staticmethod
     def analyze_voltage(voltage: float, battery_type: str,
                         nominal_voltage: float,
                         temperature: float) -> Dict:
@@ -554,14 +553,11 @@ if current is not None:
             voltage_percentage = (voltage_normalized / voltage_range) * 100
 
             # Analyze voltage stability (example with static values, real implementation would use time-series data)
-           voltage_range = specs["max_voltage"] - specs["min_voltage"]
-voltage_stability = "Stable"
-
-if voltage > specs["nominal_voltage"] + (voltage_range * 0.1):
-    voltage_stability = "High"
-elif voltage < specs["nominal_voltage"] - (voltage_range * 0.1):
-    voltage_stability = "Low"
-
+            voltage_stability = "Stable"
+            if voltage > specs["nominal_voltage"] * 1.1:
+                voltage_stability = "High"
+            elif voltage < specs["nominal_voltage"] * 0.9:
+                voltage_stability = "Low"
 
             # Determine voltage health status
             if voltage_percentage > 90:
