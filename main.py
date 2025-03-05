@@ -24,8 +24,7 @@ app = FastAPI(
     version="1.0",
     docs_url="/docs",  # ✅ Ensure Swagger UI is enabled
     redoc_url="/redoc",
-   # openapi_url="/openapi.json"  # ✅ Ensure OpenAPI JSON is available
-)
+ )
 # Enable CORS for Replit environment
 app.add_middleware(
     CORSMiddleware,
@@ -53,21 +52,7 @@ async def http_exception_handler(request, exc):
         }
     )
 
-# @app.get("/api-list")
-# async def api_list():
-  #  """Returns a list of available API endpoints"""
-   # return {
-    #    "endpoints": [
-     #       "/",
-      #      "/health",
-       #     "/docs",
-        #    "/api-list",
-         #   "/battery/diagnose/soc",
-          #  "/battery/diagnose/soh",
-           # "/battery/diagnose/resistance",
-           # "/battery/logs"
-        # ]
-  #  }
+
 
 
 @app.exception_handler(404)
@@ -102,38 +87,8 @@ async def shutdown_event():
     """Execute on application shutdown"""
     logger.info("FastAPI application shutting down...")
 
-@app.api_route("/", methods=["GET", "HEAD"])
-async def root():
-    """Root endpoint to verify API is running"""
-    logger.info("Root endpoint accessed")
-    return JSONResponse({
-        "status": "online",
-        "message": "Welcome to Battery OS API",
-        "documentation": "/docs",
-        "health_check": "/health"
-    })
 
 
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    logger.info("Health check endpoint accessed")
-    try:
-        return JSONResponse({
-            "status": "healthy",
-            "timestamp": datetime.now().isoformat(),
-            "version": "1.0.0",
-            "server": "FastAPI"
-        })
-    except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        return JSONResponse(
-            status_code=500,
-            content={
-                "status": "unhealthy",
-                "error": str(e)
-            }
-        )
 
 @app.post("/battery/diagnose/soc")
 async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(None)):
@@ -240,9 +195,6 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
         logger.error(f"Unexpected error in resistance diagnosis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.get("/favicon.ico")
-async def favicon():
-    return JSONResponse(status_code=204)  # No content response
 
 
 if __name__ == "__main__":
