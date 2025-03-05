@@ -71,9 +71,9 @@ async def not_found_exception_handler(request, exc):
                 "/health",
                 "/api-list",
                 "/api-detail/{parameter}",
-                "Api/v1/battery/diagnose/soc",
-                "Api/v1/battery/diagnose/soh",
-                "Api/v1/battery/diagnose/resistance",
+                "/battery/diagnose/soc",
+                "/battery/diagnose/soh",
+                "/battery/diagnose/resistance",
                 "/battery/logs"
             ]
         }
@@ -88,6 +88,8 @@ async def startup_event():
 async def shutdown_event():
     """Execute on application shutdown"""
     logger.info("FastAPI application shutting down...")
+
+from api_key_manager import api_key_manager
 
 @app.get("/")
 async def root():
@@ -121,12 +123,21 @@ async def health_check():
             }
         )
 
-@app.post("Api/v1/battery/diagnose/soc", tags=["Universal Battery Diagnostics"])
+@app.post("/battery/diagnose/soc")
 async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate State of Charge based on voltage"""
     if not x_api_key:
         raise HTTPException(status_code=422, detail="API key is required")
+        
+    # Validate API key usage
+    if not api_key_manager.validate_key(x_api_key):
+        raise HTTPException(status_code=401, detail="Invalid API key or usage limit exceeded")
+        
     try:
+        # Increment API key usage
+        usage = api_key_manager.increment_usage(x_api_key)
+        remaining = api_key_manager.max_usage - usage
+        
         logger.info(f"SOC diagnosis for {request.batteryType} battery with nominal voltage {request.nominalVoltage}V")
         result = BatteryDiagnostics.calculate_soc(
             voltage=request.voltage,
@@ -143,6 +154,13 @@ async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(No
             "batteryType": request.batteryType,
             "result": result
         })
+
+        # Add usage info to response
+        result["api_usage"] = {
+            "used": usage,
+            "remaining": remaining,
+            "limit": api_key_manager.max_usage
+        }
 
         return JSONResponse(result)
     except ValueError as e:
@@ -166,7 +184,7 @@ async def get_diagnostic_history(x_api_key: Optional[str] = Header(None)):
         logger.error(f"Error retrieving diagnostic history: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("Api/v1/battery/diagnose/soh", tags=["Universal Battery Diagnostics"])
+@app.post("/battery/diagnose/soh")
 async def diagnose_soh(request: SOHRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate State of Health based on capacity"""
     if not x_api_key:
@@ -195,7 +213,7 @@ async def diagnose_soh(request: SOHRequest, x_api_key: Optional[str] = Header(No
         logger.error(f"Unexpected error in SOH diagnosis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("Api/v1/battery/diagnose/voltage", tags=["Universal Battery Diagnostics"])
+@app.post("/battery/diagnose/voltage", tags=["diagnostics"])
 async def analyze_voltage(request: VoltageRequest, x_api_key: Optional[str] = Header(None)):
     """Analyze voltage levels and provide detailed insights"""
     if not x_api_key:
@@ -225,7 +243,7 @@ async def analyze_voltage(request: VoltageRequest, x_api_key: Optional[str] = He
         logger.error(f"Unexpected error in voltage analysis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("Api/v1/battery/diagnose/resistance", tags=["Universal Battery Diagnostics"])
+@app.post("/battery/diagnose/resistance")
 async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate internal resistance"""
     if not x_api_key:
@@ -255,7 +273,7 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
         logger.error(f"Unexpected error in resistance diagnosis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
         
-@app.post("Api/v1/battery/diagnose/capacity-fade", tags=["Universal Battery Diagnostics"])
+@app.post("/battery/diagnose/capacity-fade", tags=["diagnostics"])
 async def analyze_capacity_fade(request: CapacityFadeRequest, x_api_key: Optional[str] = Header(None)):
     """Analyze capacity fade and predict remaining lifetime"""
     if not x_api_key:
@@ -285,7 +303,7 @@ async def analyze_capacity_fade(request: CapacityFadeRequest, x_api_key: Optiona
         logger.error(f"Unexpected error in capacity fade analysis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("Api/v1/battery/diagnose/cell-balance", tags=["Universal Battery Diagnostics"])
+@app.post("/battery/diagnose/cell-balance", tags=["diagnostics"])
 async def check_cell_balance(request: CellBalanceRequest, x_api_key: Optional[str] = Header(None)):
     """Monitor cell voltage balance and identify issues"""
     if not x_api_key:
@@ -313,7 +331,7 @@ async def check_cell_balance(request: CellBalanceRequest, x_api_key: Optional[st
         logger.error(f"Unexpected error in cell balance check: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("Api/v1/battery/diagnose/safety", tags=["Universal Battery Diagnostics"])
+@app.post("/battery/diagnose/safety", tags=["diagnostics"])
 async def monitor_safety(request: SafetyRequest, x_api_key: Optional[str] = Header(None)):
     """Monitor battery safety parameters and assess risks"""
     if not x_api_key:
@@ -344,7 +362,7 @@ async def monitor_safety(request: SafetyRequest, x_api_key: Optional[str] = Head
         logger.error(f"Unexpected error in safety monitoring: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("Api/v1/battery/diagnose/thermal", tags=["Universal Battery Diagnostics"])
+@app.post("/battery/diagnose/thermal", tags=["diagnostics"])
 async def analyze_thermal(request: ThermalRequest, x_api_key: Optional[str] = Header(None)):
     """Analyze thermal conditions and predict thermal runaway risks"""
     if not x_api_key:
@@ -374,7 +392,7 @@ async def analyze_thermal(request: ThermalRequest, x_api_key: Optional[str] = He
         logger.error(f"Unexpected error in thermal analysis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("Api/v1/battery/diagnose/cycle-life", tags=["Universal Battery Diagnostics"])
+@app.post("/battery/diagnose/cycle-life", tags=["diagnostics"])
 async def estimate_cycle_life(request: CycleLifeRequest, x_api_key: Optional[str] = Header(None)):
     """Predict remaining cycle life based on usage patterns"""
     if not x_api_key:
@@ -404,7 +422,7 @@ async def estimate_cycle_life(request: CycleLifeRequest, x_api_key: Optional[str
         logger.error(f"Unexpected error in cycle life estimation: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("Api/v1/battery/diagnose/faults", tags=["Universal Battery Diagnostics"])
+@app.post("/battery/diagnose/faults", tags=["diagnostics"])
 async def detect_faults(request: FaultRequest, x_api_key: Optional[str] = Header(None)):
     """Detect and diagnose battery faults"""
     if not x_api_key:
@@ -444,3 +462,71 @@ if __name__ == "__main__":
         uvicorn.run(app, host="0.0.0.0", port=port, reload=True)
     except Exception as e:
         logger.error(f"Failed to start server: {e}")
+
+# Admin API key management endpoints
+@app.get("/admin/api-keys")
+async def get_api_keys(admin_key: str = Header(None)):
+    """Admin endpoint to view all API keys and their usage"""
+    if not api_key_manager.validate_admin_key(admin_key):
+        raise HTTPException(status_code=401, detail="Invalid admin credentials")
+        
+    return JSONResponse({
+        "api_keys": api_key_manager.get_all_keys(),
+        "max_usage": api_key_manager.max_usage
+    })
+
+@app.post("/admin/api-keys")
+async def add_api_key(admin_key: str = Header(None), api_key: str = None):
+    """Admin endpoint to add a new API key"""
+    if not api_key_manager.validate_admin_key(admin_key):
+        raise HTTPException(status_code=401, detail="Invalid admin credentials")
+        
+    if not api_key:
+        raise HTTPException(status_code=400, detail="API key is required")
+        
+    success = api_key_manager.add_key(api_key)
+    if not success:
+        raise HTTPException(status_code=400, detail="API key already exists")
+        
+    return JSONResponse({"status": "success", "message": f"API key '{api_key}' added"})
+
+@app.delete("/admin/api-keys/{api_key}")
+async def remove_api_key(api_key: str, admin_key: str = Header(None)):
+    """Admin endpoint to remove an API key"""
+    if not api_key_manager.validate_admin_key(admin_key):
+        raise HTTPException(status_code=401, detail="Invalid admin credentials")
+        
+    success = api_key_manager.remove_key(api_key)
+    if not success:
+        raise HTTPException(status_code=404, detail="API key not found")
+        
+    return JSONResponse({"status": "success", "message": f"API key '{api_key}' removed"})
+
+@app.post("/admin/api-keys/{api_key}/reset")
+async def reset_api_key_usage(api_key: str, admin_key: str = Header(None)):
+    """Admin endpoint to reset usage count for an API key"""
+    if not api_key_manager.validate_admin_key(admin_key):
+        raise HTTPException(status_code=401, detail="Invalid admin credentials")
+        
+    success = api_key_manager.reset_usage(api_key)
+    if not success:
+        raise HTTPException(status_code=404, detail="API key not found")
+        
+    return JSONResponse({"status": "success", "message": f"Usage reset for API key '{api_key}'"})
+
+@app.post("/admin/max-usage")
+async def set_max_usage(admin_key: str = Header(None), max_usage: int = None):
+    """Admin endpoint to change the maximum usage limit"""
+    if not api_key_manager.validate_admin_key(admin_key):
+        raise HTTPException(status_code=401, detail="Invalid admin credentials")
+        
+    if max_usage is None or max_usage < 1:
+        raise HTTPException(status_code=400, detail="Valid max usage value required")
+        
+    api_key_manager.max_usage = max_usage
+    logger.info(f"Max usage limit changed to {max_usage}")
+    
+    return JSONResponse({
+        "status": "success", 
+        "message": f"Maximum usage limit set to {max_usage}"
+    })
