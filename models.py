@@ -33,9 +33,9 @@ class SOCRequest(BaseModel):
 
     @model_validator(mode='after')
     def validate_parameters(self) -> 'SOCRequest':
-        from battery_diagnostics import battery_diagnostics
+        from battery_diagnostics import BatteryDiagnostics
         
-        valid_types = list(battery_diagnostics.BATTERY_TYPES.keys())
+        valid_types = list(BatteryDiagnostics.BATTERY_TYPES.keys())
         if self.batteryType not in valid_types:
             valid_type_examples = ["Li-ion_24V", "LFP_48V", "Li-ion", "LFP", "Lead-acid"]
             raise ValueError(f"Battery type '{self.batteryType}' is not valid. Examples of valid types: {valid_type_examples}")
@@ -148,9 +148,9 @@ class VoltageRequest(BaseModel):
 
     @model_validator(mode='after')
     def validate_parameters(self) -> 'VoltageRequest':
-        from battery_diagnostics import battery_diagnostics
+        from battery_diagnostics import BatteryDiagnostics
         
-        valid_types = list(battery_diagnostics.BATTERY_TYPES.keys())
+        valid_types = list(BatteryDiagnostics.BATTERY_TYPES.keys())
         if self.batteryType not in valid_types:
             raise ValueError(f"Battery type '{self.batteryType}' is not valid. Valid types are: {valid_types}")
             
@@ -164,7 +164,6 @@ class VoltageRequest(BaseModel):
             raise ValueError("Temperature must be between -40°C and 100°C")
             
         return self
-
 
 class ThermalRequest(BaseModel):
     batteryType: str = Field(..., description="Battery chemistry type")

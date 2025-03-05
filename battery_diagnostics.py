@@ -2,7 +2,7 @@ from typing import List, Dict
 from datetime import datetime, timedelta
 
 
-class battery_diagnostics:
+class BatteryDiagnostics:
     # Battery chemistry specifications
     BATTERY_TYPES = {
         # Main battery chemistry types
@@ -159,13 +159,15 @@ class battery_diagnostics:
     @staticmethod
     def get_battery_specs(battery_type: str, nominal_voltage: float):
         """Generate battery specifications based on type and nominal voltage"""
-        if battery_type not in battery_diagnostics.BATTERY_TYPES:
+        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
             raise ValueError(f"Unknown battery type: {battery_type}")
 
         if nominal_voltage is None:
-            raise ValueError(f"Nominal voltage must be provided for battery type: {battery_type}")
+            raise ValueError(
+                f"Nominal voltage must be provided for battery type: {battery_type}"
+            )
 
-        battery_info = battery_diagnostics.BATTERY_TYPES[battery_type]
+        battery_info = BatteryDiagnostics.BATTERY_TYPES[battery_type]
         voltage_specs = battery_info["voltage_specs"]
 
         # Validate that the nominal voltage is one of the predefined values
@@ -175,7 +177,7 @@ class battery_diagnostics:
                 f"Invalid nominal voltage: {nominal_voltage}. Available nominal voltages for {battery_type}: {available_voltages}"
             )
 
-        return {
+        specs = {
             "max_temp": battery_info["max_temp"],
             "min_temp": battery_info["min_temp"],
             "nominal_voltage": nominal_voltage,
@@ -183,16 +185,16 @@ class battery_diagnostics:
             "min_voltage": voltage_specs[nominal_voltage]["min_voltage"]
         }
 
-
+        return specs
 
     @staticmethod
     def _validate_temperature(temperature: float, battery_type: str) -> float:
         """Validate and calculate temperature compensation factor"""
         # Get temperature specifications directly from the battery type
-        if battery_type not in battery_diagnostics.BATTERY_TYPES:
+        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
             raise ValueError(f"Unknown battery type: {battery_type}")
 
-        specs = battery_diagnostics.BATTERY_TYPES[battery_type]
+        specs = BatteryDiagnostics.BATTERY_TYPES[battery_type]
 
         if temperature > specs["max_temp"]:
             raise ValueError(
@@ -221,10 +223,10 @@ class battery_diagnostics:
     def calculate_soc(voltage: float, battery_type: str, temperature: float,
                       current: float, nominal_voltage: float) -> Dict:
         """Calculate State of Charge using voltage-based estimation with enhanced temperature compensation"""
-        if battery_type not in battery_diagnostics.BATTERY_TYPES:
+        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
             raise ValueError(f"Unknown battery type: {battery_type}")
 
-        specs = battery_diagnostics.get_battery_specs(battery_type,
+        specs = BatteryDiagnostics.get_battery_specs(battery_type,
                                                      nominal_voltage)
 
         # Validate voltage
@@ -238,7 +240,7 @@ class battery_diagnostics:
             )
 
         # Get temperature compensation
-        temp_factor = battery_diagnostics._validate_temperature(
+        temp_factor = BatteryDiagnostics._validate_temperature(
             temperature, battery_type)
 
         # Enhanced SOC calculation with temperature compensation
@@ -252,21 +254,20 @@ class battery_diagnostics:
 
         # Determine charging status
         Charging_status = "Idle"
-        if current is not None:
-            if current > 0:
-                Charging_status = "Charging"
-            elif current < 0:
-                Charging_status = "Discharging"
-            elif current == 0 and voltage == specs["max_voltage"]:
+        if current > 0:
+            Charging_status = "Charging"
+        elif current < 0:
+            Charging_status = "Discharging"
+        elif current == 0:
+            if voltage == specs["max_voltage"]:
                 Charging_status = "Full"
 
-
-                return {
-                    "stateOfCharge": min(max(soc, 0), 100),
-                    "estimatedRange": f"{int(soc * 0.8)} km",
-                    "chargingStatus": Charging_status,
-                    "temperatureCompensation": temp_factor
-                }
+        return {
+            "stateOfCharge": min(max(soc, 0), 100),
+            "estimatedRange": f"{int(soc * 0.8)} km",
+            "chargingStatus": Charging_status,
+            "temperatureCompensation": temp_factor
+        }
 
     @staticmethod
     def calculate_soh(current_capacity: float, rated_capacity: float,
@@ -307,12 +308,8 @@ class battery_diagnostics:
     @staticmethod
     def measure_internal_resistance(voltage: float, current: float,
                                     temperature: float,
-                                    battery_type: str) -> Dict:                           
+                                    battery_type: str) -> Dict:
         """Calculate internal resistance and assess battery condition"""
-        
-        if current == 0:
-           raise ValueError("Cannot measure resistance with zero current.")
-
         # Basic internal resistance calculation (ΔV/ΔI)
         resistance = abs((voltage / current) * 1000)  # Convert to mΩ
 
@@ -402,7 +399,7 @@ class battery_diagnostics:
     def monitor_safety(voltage: float, current: float, temperature: float,
                        pressure: float, battery_type: str) -> Dict:
         """Monitor battery safety parameters and assess risks"""
-        specs = battery_diagnostics.get_battery_specs(battery_type, nominal_voltage)
+        specs = BatteryDiagnostics.BATTERY_TYPES[battery_type]
         warnings = []
         risk_level = "Low"
 
@@ -514,8 +511,7 @@ class battery_diagnostics:
 
         # Calculate remaining cycles
         remaining_cycles = int(base_cycles * (current_soh / 100))
-        confidence = max(min(confidence, 95), 70)  # Raise floor to 70
-
+        confidence = 90 - (cycle_count / 100)  # Confidence decreases with age
 
         return {
             "remainingCycles":
@@ -526,22 +522,27 @@ class battery_diagnostics:
             "confidenceLevel":
             max(min(confidence, 95), 60)
         }
- @staticmethod
+
+    @staticmethod
     def analyze_voltage(voltage: float, battery_type: str,
                         nominal_voltage: float,
                         temperature: float) -> Dict:
             """Analyze voltage levels and provide detailed insights"""
-            if battery_type not in battery_diagnostics.BATTERY_TYPES:
+            if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
                 raise ValueError(f"Unknown battery type: {battery_type}")
 
-            specs = battery_diagnostics.get_battery_specs(
+            specs = BatteryDiagnostics.get_battery_specs(
                 battery_type, nominal_voltage)
 
             # Validate voltage
             if voltage > specs["max_voltage"]:
-                raise ValueError(f"Voltage {voltage}V exceeds maximum allowed {specs['max_voltage']}V")
+                raise ValueError(
+                    f"Voltage {voltage}V exceeds maximum allowed {specs['max_voltage']}V"
+                )
             if voltage < specs["min_voltage"]:
-                raise ValueError(f"Voltage {voltage}V below minimum allowed {specs['min_voltage']}V")
+                raise ValueError(
+                    f"Voltage {voltage}V below minimum allowed {specs['min_voltage']}V"
+                )
 
             # Calculate voltage health percentage
             voltage_range = specs["max_voltage"] - specs["min_voltage"]
@@ -609,7 +610,7 @@ class battery_diagnostics:
         severity = "Normal"
 
         # Check for short circuit
-        if voltage < battery_diagnostics.BATTERY_TYPES[battery_type][
+        if voltage < BatteryDiagnostics.BATTERY_TYPES[battery_type][
                 "min_voltage"] * 0.5:
             faults.append("Possible short circuit")
             severity = "Critical"
