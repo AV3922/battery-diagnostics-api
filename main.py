@@ -71,9 +71,9 @@ async def not_found_exception_handler(request, exc):
                 "/health",
                 "/api-list",
                 "/api-detail/{parameter}",
-                "/battery/diagnose/soc",
-                "/battery/diagnose/soh",
-                "/battery/diagnose/resistance",
+                "Api/v1/battery/diagnose/soc",
+                "Api/v1/battery/diagnose/soh",
+                "Api/v1/battery/diagnose/resistance",
                 "/battery/logs"
             ]
         }
@@ -121,7 +121,7 @@ async def health_check():
             }
         )
 
-@app.post("/battery/diagnose/soc", tags=["diagnostics"])
+@app.post("Api/v1/battery/diagnose/soc", tags=["diagnostics"])
 async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate State of Charge based on voltage"""
     if not x_api_key:
@@ -166,7 +166,7 @@ async def get_diagnostic_history(x_api_key: Optional[str] = Header(None)):
         logger.error(f"Error retrieving diagnostic history: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("/battery/diagnose/soh", tags=["diagnostics"])
+@app.post("Api/v1/battery/diagnose/soh", tags=["diagnostics"])
 async def diagnose_soh(request: SOHRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate State of Health based on capacity"""
     if not x_api_key:
@@ -195,7 +195,7 @@ async def diagnose_soh(request: SOHRequest, x_api_key: Optional[str] = Header(No
         logger.error(f"Unexpected error in SOH diagnosis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("/battery/diagnose/voltage", tags=["diagnostics"])
+@app.post("Api/v1/battery/diagnose/voltage", tags=["diagnostics"])
 async def analyze_voltage(request: VoltageRequest, x_api_key: Optional[str] = Header(None)):
     """Analyze voltage levels and provide detailed insights"""
     if not x_api_key:
@@ -225,7 +225,7 @@ async def analyze_voltage(request: VoltageRequest, x_api_key: Optional[str] = He
         logger.error(f"Unexpected error in voltage analysis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("/battery/diagnose/resistance", tags=["diagnostics"])
+@app.post("Api/v1/battery/diagnose/resistance", tags=["diagnostics"])
 async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate internal resistance"""
     if not x_api_key:
@@ -255,7 +255,7 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
         logger.error(f"Unexpected error in resistance diagnosis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
         
-@app.post("/battery/diagnose/capacity-fade", tags=["diagnostics"])
+@app.post("Api/v1/battery/diagnose/capacity-fade", tags=["diagnostics"])
 async def analyze_capacity_fade(request: CapacityFadeRequest, x_api_key: Optional[str] = Header(None)):
     """Analyze capacity fade and predict remaining lifetime"""
     if not x_api_key:
@@ -285,7 +285,7 @@ async def analyze_capacity_fade(request: CapacityFadeRequest, x_api_key: Optiona
         logger.error(f"Unexpected error in capacity fade analysis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("/battery/diagnose/cell-balance", tags=["diagnostics"])
+@app.post("Api/v1/battery/diagnose/cell-balance", tags=["diagnostics"])
 async def check_cell_balance(request: CellBalanceRequest, x_api_key: Optional[str] = Header(None)):
     """Monitor cell voltage balance and identify issues"""
     if not x_api_key:
@@ -313,7 +313,7 @@ async def check_cell_balance(request: CellBalanceRequest, x_api_key: Optional[st
         logger.error(f"Unexpected error in cell balance check: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("/battery/diagnose/safety", tags=["diagnostics"])
+@app.post("Api/v1/battery/diagnose/safety", tags=["diagnostics"])
 async def monitor_safety(request: SafetyRequest, x_api_key: Optional[str] = Header(None)):
     """Monitor battery safety parameters and assess risks"""
     if not x_api_key:
@@ -344,7 +344,7 @@ async def monitor_safety(request: SafetyRequest, x_api_key: Optional[str] = Head
         logger.error(f"Unexpected error in safety monitoring: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("/battery/diagnose/thermal", tags=["diagnostics"])
+@app.post("Api/v1/battery/diagnose/thermal", tags=["diagnostics"])
 async def analyze_thermal(request: ThermalRequest, x_api_key: Optional[str] = Header(None)):
     """Analyze thermal conditions and predict thermal runaway risks"""
     if not x_api_key:
@@ -374,7 +374,7 @@ async def analyze_thermal(request: ThermalRequest, x_api_key: Optional[str] = He
         logger.error(f"Unexpected error in thermal analysis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("/battery/diagnose/cycle-life", tags=["diagnostics"])
+@app.post("Api/v1/battery/diagnose/cycle-life", tags=["diagnostics"])
 async def estimate_cycle_life(request: CycleLifeRequest, x_api_key: Optional[str] = Header(None)):
     """Predict remaining cycle life based on usage patterns"""
     if not x_api_key:
@@ -404,7 +404,7 @@ async def estimate_cycle_life(request: CycleLifeRequest, x_api_key: Optional[str
         logger.error(f"Unexpected error in cycle life estimation: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("/battery/diagnose/faults", tags=["diagnostics"])
+@app.post("Api/v1/battery/diagnose/faults", tags=["diagnostics"])
 async def detect_faults(request: FaultRequest, x_api_key: Optional[str] = Header(None)):
     """Detect and diagnose battery faults"""
     if not x_api_key:
