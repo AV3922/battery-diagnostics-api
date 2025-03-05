@@ -104,7 +104,7 @@ async def analyze_voltage(request: VoltageRequest, x_api_key: Optional[str] = He
         raise HTTPException(status_code=422, detail="API key is required")
     try:
         logger.info(f"Voltage analysis for {request.batteryType} battery with nominal voltage {request.nominalVoltage}V")
-        result = BatteryDiagnostics.analyze_voltage(
+        result = battery_diagnostics.analyze_voltage(
             voltage=request.voltage,
             battery_type=request.batteryType,
             nominal_voltage=request.nominalVoltage,
@@ -138,7 +138,7 @@ async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(No
     
     try:
         logger.info(f"SOC diagnosis for {request.batteryType} battery")
-        result = BatteryDiagnostics.calculate_soc(
+        result = battery_diagnostics.calculate_soc(
             voltage=request.voltage,
             battery_type=request.batteryType,
             temperature=request.temperature,
@@ -183,7 +183,7 @@ async def diagnose_soh(request: SOHRequest, x_api_key: Optional[str] = Header(No
         raise HTTPException(status_code=422, detail="API key is required")
     try:
         logger.info(f"SOH diagnosis for {request.batteryType} battery")
-        result = BatteryDiagnostics.calculate_soh(
+        result = battery_diagnostics.calculate_soh(
             current_capacity=request.currentCapacity,
             rated_capacity=request.ratedCapacity,
             cycle_count=request.cycleCount
@@ -212,7 +212,7 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
         raise HTTPException(status_code=422, detail="API key is required")
     try:
         logger.info(f"Resistance diagnosis for {request.batteryType} battery")
-        result = BatteryDiagnostics.measure_internal_resistance(
+        result = battery_diagnostics.measure_internal_resistance(
             voltage=request.voltage,
             current=request.current,
             temperature=request.temperature,
@@ -238,7 +238,7 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
 @app.post("/battery/diagnose/capacity_fade")
 async def diagnose_capacity_fade(request: CapacityFadeRequest):
     """Analyze battery capacity fade over time."""
-    result = BatteryDiagnostics.analyze_capacity_fade(
+    result = battery_diagnostics.analyze_capacity_fade(
         initial_capacity=request.initialCapacity,
         current_capacity=request.currentCapacity,
         cycle_count=request.cycleCount,
@@ -250,7 +250,7 @@ async def diagnose_capacity_fade(request: CapacityFadeRequest):
 @app.post("/battery/diagnose/cell_balance")
 async def diagnose_cell_balance(request: CellBalanceRequest):
     """Monitor cell voltage balance and identify issues."""
-    result = BatteryDiagnostics.check_cell_balance(
+    result = battery_diagnostics.check_cell_balance(
         cell_voltages=request.cellVoltages, 
         temperature=request.temperature
     )
@@ -260,7 +260,7 @@ async def diagnose_cell_balance(request: CellBalanceRequest):
 @app.post("/battery/diagnose/cycle_life")
 async def diagnose_cycle_life(request: CycleLifeRequest):
     """Estimate remaining cycle life based on battery usage."""
-    result = BatteryDiagnostics.estimate_cycle_life(
+    result = battery_diagnostics.estimate_cycle_life(
         cycle_count=request.cycleCount,
         depth_of_discharge=request.depthOfDischarge,
         avg_temperature=request.averageTemperature,
@@ -272,7 +272,7 @@ async def diagnose_cycle_life(request: CycleLifeRequest):
 @app.post("/battery/diagnose/safety")
 async def diagnose_safety(request: SafetyRequest):
     """Monitor battery safety parameters and assess risks."""
-    result = BatteryDiagnostics.monitor_safety(
+    result = battery_diagnostics.monitor_safety(
         voltage=request.voltage,
         current=request.current,
         temperature=request.temperature,
@@ -285,7 +285,7 @@ async def diagnose_safety(request: SafetyRequest):
 @app.post("/battery/diagnose/thermal")
 async def diagnose_thermal(request: ThermalRequest):
     """Analyze thermal conditions and predict risks."""
-    result = BatteryDiagnostics.analyze_thermal(
+    result = battery_diagnostics.analyze_thermal(
         temperature=request.temperature,
         rate_of_change=request.rateOfChange,
         ambient_temp=request.ambientTemperature,
@@ -297,7 +297,7 @@ async def diagnose_thermal(request: ThermalRequest):
 @app.post("/battery/diagnose/fault")
 async def diagnose_faults(request: FaultRequest):
     """Detect and diagnose potential battery faults."""
-    result = BatteryDiagnostics.detect_faults(
+    result = battery_diagnostics.detect_faults(
         voltage=request.voltage,
         current=request.current,
         temperature=request.temperature,
