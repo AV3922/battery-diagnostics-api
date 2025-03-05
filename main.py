@@ -121,7 +121,7 @@ async def health_check():
             }
         )
 
-@app.post("/battery/diagnose/soc")
+@app.post("/battery/diagnose/soc", tags=["diagnostics"])
 async def diagnose_soc(request: SOCRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate State of Charge based on voltage"""
     if not x_api_key:
@@ -166,7 +166,7 @@ async def get_diagnostic_history(x_api_key: Optional[str] = Header(None)):
         logger.error(f"Error retrieving diagnostic history: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("/battery/diagnose/soh")
+@app.post("/battery/diagnose/soh", tags=["diagnostics"])
 async def diagnose_soh(request: SOHRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate State of Health based on capacity"""
     if not x_api_key:
@@ -225,7 +225,7 @@ async def analyze_voltage(request: VoltageRequest, x_api_key: Optional[str] = He
         logger.error(f"Unexpected error in voltage analysis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.post("/battery/diagnose/resistance")
+@app.post("/battery/diagnose/resistance", tags=["diagnostics"])
 async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[str] = Header(None)):
     """Calculate internal resistance"""
     if not x_api_key:
