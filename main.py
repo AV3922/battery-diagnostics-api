@@ -8,8 +8,12 @@ import os
 from starlette.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from models import BatteryParameters, SOCRequest, SOHRequest, ResistanceRequest
-from battery_diagnostics import BatteryDiagnostics
+from models import (
+    BatteryParameters, SOCRequest, SOHRequest, ResistanceRequest,
+    CapacityFadeRequest, CellBalanceRequest, CycleLifeRequest,
+    SafetyRequest, ThermalRequest, FaultRequest
+)
+
 
 # Configure logging
 logging.basicConfig(
@@ -200,17 +204,89 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
         logger.error(f"Unexpected error in resistance diagnosis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@app.post("/battery/diagnose/capacity_fade")
+async def diagnose_capacity_fade(request: CapacityFadeRequest):
+    """Analyze battery capacity fade over time."""
+    result = BatteryDiagnostics.analyze_capacity_fade(
+        initial_capacity=request.initialCapacity,
+        current_capacity=request.currentCapacity,
+        cycle_count=request.cycleCount,
+        time_in_service=request.timeInService
+    )
+    return JSONResponse(result)
 
-@app.api_route("/", methods=["GET", "HEAD"])
-async def root():
-    """Root endpoint to verify API is running"""
-    logger.info("Root endpoint accessed")
-    return JSONResponse({
-        "status": "online",
-        "message": "Welcome to Battery OS API",
-        "documentation": "/docs",
-        "health_check": "/health"
-    })
+
+@app.post("/battery/diagnose/cell_balance")
+async def diagnose_cell_balance(request: CellBalanceRequest):
+    """Monitor cell voltage balance and identify issues."""
+    result = BatteryDiagnostics.check_cell_balance(
+        cell_voltages=request.cellVoltages, 
+        temperature=request.temperature
+    )
+    return JSONResponse(result)
+
+
+@app.post("/battery/diagnose/cycle_life")
+async def diagnose_cycle_life(request: CycleLifeRequest):
+    """Estimate remaining cycle life based on battery usage."""
+    result = BatteryDiagnostics.estimate_cycle_life(
+        cycle_count=request.cycleCount,
+        depth_of_discharge=request.depthOfDischarge,
+        avg_temperature=request.averageTemperature,
+        current_soh=request.currentSOH
+    )
+    return JSONResponse(result)
+
+
+@app.post("/battery/diagnose/safety")
+async def diagnose_safety(request: SafetyRequest):
+    """Monitor battery safety parameters and assess risks."""
+    result = BatteryDiagnostics.monitor_safety(
+        voltage=request.voltage,
+        current=request.current,
+        temperature=request.temperature,
+        pressure=request.pressure,
+        battery_type=request.batteryType
+    )
+    return JSONResponse(result)
+
+
+@app.post("/battery/diagnose/thermal")
+async def diagnose_thermal(request: ThermalRequest):
+    """Analyze thermal conditions and predict risks."""
+    result = BatteryDiagnostics.analyze_thermal(
+        temperature=request.temperature,
+        rate_of_change=request.rateOfChange,
+        ambient_temp=request.ambientTemperature,
+        load_profile=request.loadProfile
+    )
+    return JSONResponse(result)
+
+
+@app.post("/battery/diagnose/fault")
+async def diagnose_faults(request: FaultRequest):
+    """Detect and diagnose potential battery faults."""
+    result = BatteryDiagnostics.detect_faults(
+        voltage=request.voltage,
+        current=request.current,
+        temperature=request.temperature,
+        impedance=request.impedance,
+        battery_type=request.batteryType
+    )
+    return JSONResponse(result)
+
+
+
+# @app.api_route("/", methods=["GET", "HEAD"])
+# async def root():
+    # """Root endpoint to verify API is running"""
+    # logger.info("Root endpoint accessed")
+    # return JSONResponse({
+        # "status": "online",
+        # "message": "Welcome to Battery OS API",
+        # "documentation": "/docs",
+        # "health_check": "/health"
+    # })
     
 
 
