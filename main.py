@@ -8,7 +8,11 @@ import os
 from starlette.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from models import BatteryParameters, SOCRequest, SOHRequest, ResistanceRequest, VoltageRequest
+from models import (
+    BatteryParameters, SOCRequest, SOHRequest, ResistanceRequest, VoltageRequest,
+    CapacityFadeRequest, CellBalanceRequest, SafetyRequest, ThermalRequest,
+    CycleLifeRequest, FaultRequest
+)
 from battery_diagnostics import BatteryDiagnostics
 
 # Configure logging
@@ -249,6 +253,186 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"Unexpected error in resistance diagnosis: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+        
+@app.post("/battery/diagnose/capacity-fade", tags=["diagnostics"])
+async def analyze_capacity_fade(request: CapacityFadeRequest, x_api_key: Optional[str] = Header(None)):
+    """Analyze capacity fade and predict remaining lifetime"""
+    if not x_api_key:
+        raise HTTPException(status_code=422, detail="API key is required")
+    try:
+        logger.info(f"Capacity fade analysis for {request.batteryType} battery")
+        result = BatteryDiagnostics.analyze_capacity_fade(
+            initial_capacity=request.initialCapacity,
+            current_capacity=request.currentCapacity,
+            cycle_count=request.cycleCount,
+            time_in_service=request.timeInService
+        )
+
+        # Store diagnostic history for logs
+        test_db["diagnostic_history"].append({
+            "timestamp": datetime.now().isoformat(),
+            "type": "capacity-fade",
+            "batteryType": request.batteryType,
+            "result": result
+        })
+
+        return JSONResponse(result)
+    except ValueError as e:
+        logger.error(f"Capacity fade analysis error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error in capacity fade analysis: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/battery/diagnose/cell-balance", tags=["diagnostics"])
+async def check_cell_balance(request: CellBalanceRequest, x_api_key: Optional[str] = Header(None)):
+    """Monitor cell voltage balance and identify issues"""
+    if not x_api_key:
+        raise HTTPException(status_code=422, detail="API key is required")
+    try:
+        logger.info(f"Cell balance check for {request.batteryType} battery")
+        result = BatteryDiagnostics.check_cell_balance(
+            cell_voltages=request.cellVoltages,
+            temperature=request.temperature
+        )
+
+        # Store diagnostic history for logs
+        test_db["diagnostic_history"].append({
+            "timestamp": datetime.now().isoformat(),
+            "type": "cell-balance",
+            "batteryType": request.batteryType,
+            "result": result
+        })
+
+        return JSONResponse(result)
+    except ValueError as e:
+        logger.error(f"Cell balance check error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error in cell balance check: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/battery/diagnose/safety", tags=["diagnostics"])
+async def monitor_safety(request: SafetyRequest, x_api_key: Optional[str] = Header(None)):
+    """Monitor battery safety parameters and assess risks"""
+    if not x_api_key:
+        raise HTTPException(status_code=422, detail="API key is required")
+    try:
+        logger.info(f"Safety monitoring for {request.batteryType} battery")
+        result = BatteryDiagnostics.monitor_safety(
+            voltage=request.voltage,
+            current=request.current,
+            temperature=request.temperature,
+            pressure=request.pressure,
+            battery_type=request.batteryType
+        )
+
+        # Store diagnostic history for logs
+        test_db["diagnostic_history"].append({
+            "timestamp": datetime.now().isoformat(),
+            "type": "safety",
+            "batteryType": request.batteryType,
+            "result": result
+        })
+
+        return JSONResponse(result)
+    except ValueError as e:
+        logger.error(f"Safety monitoring error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error in safety monitoring: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/battery/diagnose/thermal", tags=["diagnostics"])
+async def analyze_thermal(request: ThermalRequest, x_api_key: Optional[str] = Header(None)):
+    """Analyze thermal conditions and predict thermal runaway risks"""
+    if not x_api_key:
+        raise HTTPException(status_code=422, detail="API key is required")
+    try:
+        logger.info(f"Thermal analysis for {request.batteryType} battery")
+        result = BatteryDiagnostics.analyze_thermal(
+            temperature=request.temperature,
+            rate_of_change=request.rateOfChange,
+            ambient_temp=request.ambientTemperature,
+            load_profile=request.loadProfile
+        )
+
+        # Store diagnostic history for logs
+        test_db["diagnostic_history"].append({
+            "timestamp": datetime.now().isoformat(),
+            "type": "thermal",
+            "batteryType": request.batteryType,
+            "result": result
+        })
+
+        return JSONResponse(result)
+    except ValueError as e:
+        logger.error(f"Thermal analysis error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error in thermal analysis: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/battery/diagnose/cycle-life", tags=["diagnostics"])
+async def estimate_cycle_life(request: CycleLifeRequest, x_api_key: Optional[str] = Header(None)):
+    """Predict remaining cycle life based on usage patterns"""
+    if not x_api_key:
+        raise HTTPException(status_code=422, detail="API key is required")
+    try:
+        logger.info(f"Cycle life estimation for {request.batteryType} battery")
+        result = BatteryDiagnostics.estimate_cycle_life(
+            cycle_count=request.cycleCount,
+            depth_of_discharge=request.depthOfDischarge,
+            avg_temperature=request.averageTemperature,
+            current_soh=request.currentSOH
+        )
+
+        # Store diagnostic history for logs
+        test_db["diagnostic_history"].append({
+            "timestamp": datetime.now().isoformat(),
+            "type": "cycle-life",
+            "batteryType": request.batteryType,
+            "result": result
+        })
+
+        return JSONResponse(result)
+    except ValueError as e:
+        logger.error(f"Cycle life estimation error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error in cycle life estimation: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/battery/diagnose/faults", tags=["diagnostics"])
+async def detect_faults(request: FaultRequest, x_api_key: Optional[str] = Header(None)):
+    """Detect and diagnose battery faults"""
+    if not x_api_key:
+        raise HTTPException(status_code=422, detail="API key is required")
+    try:
+        logger.info(f"Fault detection for {request.batteryType} battery")
+        result = BatteryDiagnostics.detect_faults(
+            voltage=request.voltage,
+            current=request.current,
+            temperature=request.temperature,
+            impedance=request.impedance,
+            battery_type=request.batteryType
+        )
+
+        # Store diagnostic history for logs
+        test_db["diagnostic_history"].append({
+            "timestamp": datetime.now().isoformat(),
+            "type": "faults",
+            "batteryType": request.batteryType,
+            "result": result
+        })
+
+        return JSONResponse(result)
+    except ValueError as e:
+        logger.error(f"Fault detection error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error in fault detection: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 if __name__ == "__main__":

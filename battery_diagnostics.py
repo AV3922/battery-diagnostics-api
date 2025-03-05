@@ -399,23 +399,36 @@ class BatteryDiagnostics:
     def monitor_safety(voltage: float, current: float, temperature: float,
                        pressure: float, battery_type: str) -> Dict:
         """Monitor battery safety parameters and assess risks"""
-        specs = BatteryDiagnostics.BATTERY_TYPES[battery_type]
+        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
+            raise ValueError(f"Unknown battery type: {battery_type}")
+            
+        battery_info = BatteryDiagnostics.BATTERY_TYPES[battery_type]
+        
+        # Use a default nominal voltage to get specs
+        # This is just for getting reference voltage values for safety monitoring
+        # We'll use the first available nominal voltage
+        first_nominal_voltage = list(battery_info["voltage_specs"].keys())[0]
+        max_voltage = battery_info["voltage_specs"][first_nominal_voltage]["max_voltage"]
+        min_voltage = battery_info["voltage_specs"][first_nominal_voltage]["min_voltage"]
+        max_temp = battery_info["max_temp"]
+        min_temp = battery_info["min_temp"]
+        
         warnings = []
         risk_level = "Low"
 
         # Check voltage limits
-        if voltage > specs["max_voltage"]:
+        if voltage > max_voltage:
             warnings.append("Overvoltage detected")
             risk_level = "High"
-        elif voltage < specs["min_voltage"]:
+        elif voltage < min_voltage:
             warnings.append("Undervoltage detected")
             risk_level = "Medium"
 
         # Check temperature
-        if temperature > specs["max_temp"]:
+        if temperature > max_temp:
             warnings.append("Overtemperature condition")
             risk_level = "High"
-        elif temperature < specs["min_temp"]:
+        elif temperature < min_temp:
             warnings.append("Low temperature operation")
             risk_level = "Medium"
 
@@ -609,9 +622,20 @@ class BatteryDiagnostics:
         faults = []
         severity = "Normal"
 
+        # Get battery type info
+        if battery_type not in BatteryDiagnostics.BATTERY_TYPES:
+            raise ValueError(f"Unknown battery type: {battery_type}")
+            
+        battery_info = BatteryDiagnostics.BATTERY_TYPES[battery_type]
+        
+        # Use a default nominal voltage to get specs
+        # This is just for getting a reference min_voltage for fault detection
+        # We'll use the first available nominal voltage
+        first_nominal_voltage = list(battery_info["voltage_specs"].keys())[0]
+        min_voltage = battery_info["voltage_specs"][first_nominal_voltage]["min_voltage"]
+        
         # Check for short circuit
-        if voltage < BatteryDiagnostics.BATTERY_TYPES[battery_type][
-                "min_voltage"] * 0.5:
+        if voltage < min_voltage * 0.5:
             faults.append("Possible short circuit")
             severity = "Critical"
 
