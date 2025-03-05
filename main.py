@@ -22,9 +22,14 @@ app = FastAPI(
     title="Battery OS API",
     description="Advanced Battery Diagnostics and Analysis API",
     version="1.0",
-    docs_url="/docs",  # ✅ Ensure Swagger UI is enabled
+    docs_url="/docs",  
     redoc_url="/redoc",
- )
+    openapi_url="/openapi.json",
+    servers=[
+        {"url": "https://battery-diagnostics-api.onrender.com", "description": "Production Server"}
+    ]
+)
+ 
 # Enable CORS for Replit environment
 app.add_middleware(
     CORSMiddleware,
