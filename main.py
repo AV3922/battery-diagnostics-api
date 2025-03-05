@@ -200,6 +200,16 @@ async def diagnose_resistance(request: ResistanceRequest, x_api_key: Optional[st
         logger.error(f"Unexpected error in resistance diagnosis: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@app.get("/")
+async def root():
+    """Root endpoint to verify API is running"""
+    logger.info("Root endpoint accessed")
+    return JSONResponse({
+        "status": "online",
+        "message": "Welcome to Battery OS API",
+        "documentation": "/docs",
+        "health_check": "/health"
+    })
 
 
 if __name__ == "__main__":
